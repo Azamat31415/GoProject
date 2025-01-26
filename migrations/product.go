@@ -7,11 +7,11 @@ import (
 // Product model for products
 type Product struct {
 	gorm.Model
-	Name        string
-	Description string
-	Price       float64
-	Stock       int
-	Category    string
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	Stock       int     `json:"stock"`
+	Category    string  `json:"category"`
 }
 
 // MigrateProduct for creation of product table
