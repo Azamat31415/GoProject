@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="./CSS/styles.css"> -->
+    <link rel="stylesheet" href="./CSS/yersultan_css/sales.css">
+    <link rel="stylesheet" href="./CSS/styles.css">
+    <link rel="icon" href="/CSS/favicon.ico">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="builds-class-header">
+        <div class="header-left">
+            <a href="Home.html">
+                <img class="logo" src="./Assets/logo.jpg" alt="HouseHub Logo">
+            </a>
+        </div>
+
+        <div class="header-right">
+            <a href="Cart.html">
+                <img class="icon" src="./Assets/корзина.png" alt="Cart" id="cart-icon">
+            </a>
+            <a href="Login.html">
+                <img class="icon" src="./Assets/empty_avatar.png" alt="Profile">
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container-fluid">
+            <div class="navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto w-100 justify-content-around">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Sales.html">Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Lease.html">Lease</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Buildings.html">Buildings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Submit_an_ad.html">Submit an ad</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Personal_account.html">Personal accounts</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+     <!-- Main -->
+    <main>
+        <br>
+        <div class="filter-container">
+            <form class="filter-form">
+    
+                <div class="filter-group">
+                    <label for="price">Price:</label>
+                    <input type="text" id="price-from" placeholder="From">
+                    <input type="text" id="price-to" placeholder="To">
+                </div>
+    
+                <div class="filter-group">
+                    <label for="area">Area:</label>
+                    <input type="text" id="arear-from" placeholder="From">
+                    <input type="text" id="area-to" placeholder="To">
+                </div>
+
+                <div class="filter-group">
+                    <label for="rooms">Rooms:</label>
+                    <select id="rooms">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5+</option>
+                    </select>
+                </div>
+    
+                <div class="filter-group">
+                    <label for="property-type">Type:</label>
+                    <select id="property-type">
+                        <option value="">All Types</option>
+                        <option value="Bare-shell">Bare-Shell Apartments</option>
+                        <option value="Turnkey">Turnkey Apartments</option>
+                        <option value="Cottage">Cottages</option>
+                    </select>
+                </div>                
+    
+                <button type="submit" class="filter-button-sales">Show result</button>
+            </form>
+        </div>
+
+        <div class="container my-5">
+            <h2 class="h2sl">Apartments and Cottages for sale in Astana</h2>
+            <div id="row-count" class="text-center my-4"></div><hr>
+            <div id="ads-container"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary">
+        <div class="container">
+            <div class="row-sales">
+                <div class="col-md-4">
+                    <p>Created by SE-2305:</p>
+                    <p>Merey Rysbayeva</p>
+                    <p>Azamat Sailaubek</p>
+                    <p>Yersultan Zhanartov</p>
+                </div>
+                <div class="col-md-4">
+                    <p>Email:</p>
+                    <p>230936@astanait.edu.kz</p>
+                    <p>230147@astanait.edu.kz</p>
+                    <p>230129@astanait.edu.kz</p>
+                </div>
+                <div class="col-md-4">
+                    <p>Follow us:</p>
+                    <a href="https://www.facebook.com/profile.php?id=61558622776083"><img src="./Assets/facebook-icon.png" alt="Facebook"></a>
+                    <a href="https://www.instagram.com/baike._?igsh=c3Jjc2Uyb3FzM3Ax&utm_source=qr"><img src="./Assets/instagram-icon.png" alt="Instagram"></a>
+                    <a href="https://www.tiktok.com/@baikenashimov?_t=8pkA6Pa7McH&_r=1"><img src="./Assets/tiktok-icon.webp" alt="TikTok"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./JS/merey_js/Sales.js"></script> 
+    <script src="./JS/yers_js/header.js"></script>
+
+</body>
+</html>

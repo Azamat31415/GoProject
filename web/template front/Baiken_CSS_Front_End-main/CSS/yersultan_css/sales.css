@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background-color: #f4f4f4;
+    font-family: "Montserrat", sans-serif;
+}
+
+.filter-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+label {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+select,
+input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.filter-button-sales {
+    grid-column: span 2;
+    padding: 10px;
+    background-color:darkturquoise;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.filter-button-sales:hover {
+    background-color:darkcyan;
+}
+
+.filter-button-lease {
+    color: white;
+    grid-column: span 2;
+    padding: 10px;
+    background-color:rgb(105, 40, 255);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.filter-button-lease:hover {
+    background-color:rgb(42, 0, 141);
+}
+
+/* Footer */
+footer {
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    border: 3px solid #4179df;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+footer img {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+}
+
+
+.reg-button-builds{
+    text-decoration: none; 
+    color: inherit;
+}
+
+.row-sales {
+    display: flex;            
+    flex-wrap: wrap;          
+    margin-right: -15px;      
+    margin-left: -15px;
+    box-sizing: border-box;   
+}
+
+#row-count {
+    font-size: 24px; 
+}
+
+.h2sl{
+    position: relative;
+    text-align: center;
+}
