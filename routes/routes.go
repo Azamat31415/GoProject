@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"GoProject/handlers"
 	"GoProject/handlers/auth_handlers"
+	"GoProject/handlers/product_handlers"
 	"GoProject/internal/middleware"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -10,8 +10,11 @@ import (
 )
 
 func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
-	r.Post("/products", handlers.AddProduct(db))
-	r.Put("/products/{id}", handlers.EditProduct(db))
+	r.Post("/products", product_handlers.AddProduct(db))
+	r.Put("/products/{id}", product_handlers.EditProduct(db))
+	r.Delete("/products/{id}", product_handlers.DeleteProduct(db))
+	r.Get("/products", product_handlers.FetchAllProducts(db))
+	r.Get("/products/{id}", product_handlers.FetchProductByID(db))
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
 	r.Group(func(protected chi.Router) {
