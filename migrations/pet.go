@@ -8,7 +8,6 @@ type Pet struct {
 	gorm.Model
 	Name    string `gorm:"not null"`
 	Species string `gorm:"not null"`
-	Breed   string
 	Age     int
 	Price   float64
 	StoreID uint
