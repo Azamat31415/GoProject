@@ -2,6 +2,7 @@ package routes
 
 import (
 	"GoProject/handlers/auth_handlers"
+	"GoProject/handlers/order_handlers"
 	"GoProject/handlers/product_handlers"
 	"GoProject/internal/middleware"
 	"github.com/go-chi/chi/v5"
@@ -17,6 +18,8 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/products/{id}", product_handlers.FetchProductByID(db))
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
+	r.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
+
 	r.Group(func(protected chi.Router) {
 		protected.Use(middleware.JWTMiddleware)
 
@@ -25,5 +28,6 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 		})
 
 		protected.Post("/logout", auth_handlers.LogoutHandler())
+		protected.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 	})
 }
