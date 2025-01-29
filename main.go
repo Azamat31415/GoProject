@@ -21,26 +21,9 @@ func main() {
 	}
 
 	// Performing migrations
-	if err := migrations.MigrateUser(db); err != nil {
-		log.Fatal("Failed to run user migration:", err)
+	if err := migrations.MigrateAll(db); err != nil {
+		log.Fatal("Failed to apply migrations:", err)
 	}
-	if err := migrations.MigrateProduct(db); err != nil {
-		log.Fatal("Failed to run product migration:", err)
-	}
-
-	if err := migrations.MigrateOrder(db); err != nil {
-		log.Fatal("Failed to run order migration:", err)
-	}
-
-	if err := migrations.MigratePet(db); err != nil {
-		log.Fatal("Failed to run pet migration:", err)
-	}
-
-	if err := migrations.MigratePickupPoint(db); err != nil {
-		log.Fatal("Failed to run pickup point migration:", err)
-	}
-
-	fmt.Println("Migrations applied successfully!")
 
 	// Initialize chi router
 	r := chi.NewRouter()

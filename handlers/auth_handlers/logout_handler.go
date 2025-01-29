@@ -7,13 +7,25 @@ import (
 	"sync"
 )
 
+type LogoutResponse struct {
+	Message string `json:"message"`
+}
+
 var revokedTokens = struct {
 	sync.Mutex
 	tokens map[string]bool
 }{tokens: make(map[string]bool)}
 
-type LogoutResponse struct {
-	Message string `json:"message"`
+func RevokeToken(token string) {
+	revokedTokens.Lock()
+	defer revokedTokens.Unlock()
+	revokedTokens.tokens[token] = true
+}
+
+func IsTokenRevoked(token string) bool {
+	revokedTokens.Lock()
+	defer revokedTokens.Unlock()
+	return revokedTokens.tokens[token]
 }
 
 func LogoutHandler() http.HandlerFunc {
@@ -24,9 +36,8 @@ func LogoutHandler() http.HandlerFunc {
 			return
 		}
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		revokedTokens.Lock()
-		revokedTokens.tokens[tokenString] = true
-		revokedTokens.Unlock()
+
+		RevokeToken(tokenString)
 
 		response := LogoutResponse{
 			Message: "Logout successful",
@@ -34,10 +45,4 @@ func LogoutHandler() http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(response)
 	}
-}
-
-func IsTokenRevoked(token string) bool {
-	revokedTokens.Lock()
-	defer revokedTokens.Unlock()
-	return revokedTokens.tokens[token]
 }
