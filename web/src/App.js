@@ -1,24 +1,19 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
-import Register from "./components/Register";
-import Products from "./components/Products";
-import Cart from "./components/Cart";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import ProductsPage from "./pages/ProductPage";
+import Home from "./pages/Home";
+import './App.css';
 
 function App() {
-  return (
-      <Router>
-        <div>
-          <h1>Pet Store</h1>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/cart" element={<Cart />} />
-          </Routes>
-        </div>
-      </Router>
-  );
+    return (
+        <Router>
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products/:category" element={<ProductsPage />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
