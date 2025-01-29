@@ -6,14 +6,21 @@ import (
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 func RenewSubscription(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		subscriptionID := chi.URLParam(r, "id")
-		if subscriptionID == "" {
+		subscriptionIDStr := chi.URLParam(r, "id")
+		if subscriptionIDStr == "" {
 			http.Error(w, "Missing subscription ID", http.StatusBadRequest)
+			return
+		}
+
+		subscriptionID, err := strconv.ParseUint(subscriptionIDStr, 10, 32)
+		if err != nil {
+			http.Error(w, "Invalid subscription ID", http.StatusBadRequest)
 			return
 		}
 
@@ -23,17 +30,23 @@ func RenewSubscription(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		// Check if subscription is active
 		if subscription.Status != "active" {
 			http.Error(w, "Cannot renew a non-active subscription", http.StatusBadRequest)
 			return
 		}
 
-		// Extend the renewal date
-		subscription.RenewalDate = subscription.RenewalDate.AddDate(0, 0, subscription.IntervalDays)
-		subscription.UpdatedAt = time.Now()
+		now := time.Now()
+		if subscription.RenewalDate.Before(now) {
+			subscription.RenewalDate = now.AddDate(0, 0, subscription.IntervalDays)
+		} else {
+			subscription.RenewalDate = subscription.RenewalDate.AddDate(0, 0, subscription.IntervalDays)
+		}
+		subscription.UpdatedAt = now
 
-		if err := db.Save(&subscription).Error; err != nil {
+		if err := db.Model(&subscription).Updates(map[string]interface{}{
+			"renewal_date": subscription.RenewalDate,
+			"updated_at":   subscription.UpdatedAt,
+		}).Error; err != nil {
 			http.Error(w, "Failed to renew subscription", http.StatusInternalServerError)
 			return
 		}

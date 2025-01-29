@@ -19,7 +19,6 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/products/{id}", product_handlers.FetchProductByID(db))
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
-	r.Put("/subscriptions/{id}/renew", subscription_handlers.RenewSubscription(db))
 	r.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 
 	r.Group(func(protected chi.Router) {
@@ -33,12 +32,13 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 		protected.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 	})
 
-	//	r.Post("/pets", personal_pet_handlers.AddUserPet(db))
-	//	r.Put("/pets/{id}", personal_pet_handlers.EditUserPet(db))
-	//	r.Delete("/pets/{id}", personal_pet_handlers.DeleteUserPet(db))
-	//	r.Get("/pets/{id}", personal_pet_handlers.FetchUserPets(db))
-	//	r.Get("/users/{userID}/pets", personal_pet_handlers.FetchUserPetByID(db))
+	//  r.Post("/pets", personal_pet_handlers.AddUserPet(db))
+	//  r.Put("/pets/{id}", personal_pet_handlers.EditUserPet(db))
+	//  r.Delete("/pets/{id}", personal_pet_handlers.DeleteUserPet(db))
+	//  r.Get("/pets/{id}", personal_pet_handlers.FetchUserPets(db))
+	//  r.Get("/users/{userID}/pets", personal_pet_handlers.FetchUserPetByID(db))
 
 	r.Post("/subscriptions", subscription_handlers.CreateSubscription(db))
 	r.Delete("/subscriptions/{id}", subscription_handlers.DeleteSubscription(db))
+	r.Put("/subscriptions/{id}/renew", subscription_handlers.RenewSubscription(db))
 }
