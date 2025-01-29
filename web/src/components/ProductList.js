@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import { Link } from "react-router-dom"; // Импортируем Link из react-router-dom
 
 const ProductList = ({ category }) => {
     const [products, setProducts] = useState([]);
@@ -39,7 +40,9 @@ const ProductList = ({ category }) => {
             <ul>
                 {products.map((product) => (
                     <li key={product.id}>
-                        <strong>{product.name}</strong> - ${product.price}
+                        <Link to={`/product/${product.id}`}>
+                            <strong>{product.name}</strong> - ${product.price}
+                        </Link>
                     </li>
                 ))}
             </ul>
