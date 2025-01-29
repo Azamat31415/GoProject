@@ -4,6 +4,7 @@ import (
 	"GoProject/handlers/auth_handlers"
 	"GoProject/handlers/order_handlers"
 	"GoProject/handlers/product_handlers"
+	"GoProject/handlers/subscription_handlers"
 	"GoProject/internal/middleware"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -30,4 +31,13 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 		protected.Post("/logout", auth_handlers.LogoutHandler())
 		protected.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 	})
+
+	//	r.Post("/pets", personal_pet_handlers.AddUserPet(db))
+	//	r.Put("/pets/{id}", personal_pet_handlers.EditUserPet(db))
+	//	r.Delete("/pets/{id}", personal_pet_handlers.DeleteUserPet(db))
+	//	r.Get("/pets/{id}", personal_pet_handlers.FetchUserPets(db))
+	//	r.Get("/users/{userID}/pets", personal_pet_handlers.FetchUserPetByID(db))
+
+	r.Post("/subscriptions", subscription_handlers.CreateSubscription(db))
+	r.Delete("/subscriptions/{id}", subscription_handlers.DeleteSubscription(db))
 }
