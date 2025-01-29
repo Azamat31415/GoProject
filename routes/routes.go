@@ -19,7 +19,10 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/products/{id}", product_handlers.FetchProductByID(db))
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
+
+	r.Post("/orders", order_handlers.CreateOrder(db))
 	r.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
+	r.Put("/orders/{order_id}/delivery", order_handlers.ChooseDeliveryMethod(db))
 
 	r.Group(func(protected chi.Router) {
 		protected.Use(middleware.JWTMiddleware)
@@ -29,7 +32,6 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 		})
 
 		protected.Post("/logout", auth_handlers.LogoutHandler())
-		protected.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 	})
 
 	//  r.Post("/pets", personal_pet_handlers.AddUserPet(db))
