@@ -18,7 +18,6 @@ func AddProduct(db *gorm.DB) http.HandlerFunc {
 		}
 
 		var product migrations.Product
-		// Логирование запроса
 		fmt.Println("Received request to add product")
 
 		if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
@@ -31,7 +30,6 @@ func AddProduct(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		// Логируем успешное создание
 		fmt.Println("Product added:", product)
 
 		w.WriteHeader(http.StatusCreated)
