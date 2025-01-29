@@ -19,6 +19,7 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/products/{id}", product_handlers.FetchProductByID(db))
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
+	r.Put("/subscriptions/{id}/renew", subscription_handlers.RenewSubscription(db))
 	r.Put("/orders/{id}/status", order_handlers.UpdateOrderStatusHandler(db))
 
 	r.Group(func(protected chi.Router) {
