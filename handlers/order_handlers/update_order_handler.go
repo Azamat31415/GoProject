@@ -6,50 +6,63 @@ import (
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
-	"strconv"
+	"time"
 )
 
 type UpdateOrderStatusRequest struct {
-	Status string `json:"status"`
+	Status string `json:"status"` // Новый статус заказа
 }
 
-func UpdateOrderStatusHandler(db *gorm.DB) http.HandlerFunc {
+func UpdateOrderStatus(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		orderIDStr := chi.URLParam(r, "id")
-		orderID, err := strconv.Atoi(orderIDStr)
-		if err != nil {
-			http.Error(w, "Invalid order ID", http.StatusBadRequest)
+		orderID := chi.URLParam(r, "id")
+		if orderID == "" {
+			http.Error(w, "Missing order ID", http.StatusBadRequest)
 			return
 		}
 
 		var req UpdateOrderStatusRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			http.Error(w, "Invalid request payload", http.StatusBadRequest)
 			return
 		}
 
-		if req.Status == "" {
-			http.Error(w, "Status is required", http.StatusBadRequest)
+		validStatuses := map[string]int{
+			"pending":    0,
+			"processing": 1,
+			"shipped":    2,
+			"on the way": 3,
+			"delivered":  4,
+			"canceled":   5,
+		}
+
+		currentStatus, validStatus := validStatuses[req.Status]
+		if !validStatus {
+			http.Error(w, "Invalid status", http.StatusBadRequest)
 			return
 		}
 
 		var order migrations.Order
 		if err := db.First(&order, orderID).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				http.Error(w, "Order not found", http.StatusNotFound)
-			} else {
-				http.Error(w, "Database error", http.StatusInternalServerError)
-			}
+			http.Error(w, "Order not found", http.StatusNotFound)
+			return
+		}
+
+		currentOrderStatusIndex := validStatuses[order.Status]
+		if currentOrderStatusIndex >= currentStatus {
+			http.Error(w, "Cannot update status to an earlier stage", http.StatusBadRequest)
 			return
 		}
 
 		order.Status = req.Status
+		order.UpdatedAt = time.Now()
+
 		if err := db.Save(&order).Error; err != nil {
 			http.Error(w, "Failed to update order status", http.StatusInternalServerError)
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Order status updated successfully"))
+		json.NewEncoder(w).Encode(order)
 	}
 }

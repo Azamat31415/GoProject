@@ -14,6 +14,7 @@ type Order struct {
 	Status         string      `gorm:"type:varchar(50);default:'pending'"`
 	TotalPrice     float64     `gorm:"type:numeric(10,2);not null"`
 	CreatedAt      time.Time   `gorm:"autoCreateTime"`
+	UpdatedAt      time.Time   `gorm:"autoCreateTime"`
 	OrderItems     []OrderItem `gorm:"constraint:OnDelete:CASCADE;"`
 }
 
