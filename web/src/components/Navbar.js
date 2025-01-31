@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 
 const categories = [
@@ -82,18 +83,41 @@ const categories = [
 ];
 
 const Navbar = () => {
+    const [activeCategory, setActiveCategory] = useState(null);
+
+    const handleCategoryClick = useCallback((categoryName) => {
+        setActiveCategory((prevActiveCategory) =>
+            prevActiveCategory === categoryName ? null : categoryName
+        );
+    }, []);
+
+    const handleOutsideClick = (event) => {
+        if (!event.target.closest(".dropdown")) {
+            setActiveCategory(null);
+        }
+    };
+
     return (
         <>
-            <header style={{ background: "#483D8B", color: "white", padding: "20px", textAlign: "center" }}>
-                <h1>My Pet Shop</h1>
+            <header className="header">
+                <Link to="/" className="logo">Pet Store</Link>
+                <div className="nav-links">
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/cart">Cart</Link>
+                </div>
             </header>
 
-            <nav style={{ marginTop: "20px" }}>
-                <ul>
+            <nav onClick={handleOutsideClick}>
+                <ul className="nav-list">
                     {categories.map((category) => (
-                        <li key={category.name}>
-                            <div className="dropdown">
-                                <button className="dropbtn">{category.name}</button>
+                        <li key={category.name} className="dropdown">
+                            <button
+                                className="dropbtn"
+                                onClick={() => handleCategoryClick(category.name)}
+                            >
+                                {category.name}
+                            </button>
+                            {activeCategory === category.name && (
                                 <div className="dropdown-content">
                                     <table className="category-table">
                                         <thead>
@@ -109,7 +133,9 @@ const Navbar = () => {
                                                 <td key={subcategory.title}>
                                                     {subcategory.items.map((item) => (
                                                         <div key={item} className="subcategory-item">
-                                                            <Link to={`/products/${category.name.toLowerCase()}/${subcategory.title.toLowerCase()}/${item.toLowerCase()}`}>
+                                                            <Link
+                                                                to={`/products/${category.name.toLowerCase()}/${subcategory.title.toLowerCase()}/${item.toLowerCase()}`}
+                                                            >
                                                                 {item}
                                                             </Link>
                                                         </div>
@@ -120,7 +146,7 @@ const Navbar = () => {
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            )}
                         </li>
                     ))}
                 </ul>
