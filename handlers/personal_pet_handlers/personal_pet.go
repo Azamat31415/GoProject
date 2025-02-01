@@ -27,7 +27,7 @@ func AddUserPet(db *gorm.DB) http.HandlerFunc {
 
 func EditUserPet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.URL.Query().Get("id")
+		id := chi.URLParam(r, "id")
 		var pet migrations.PersonalPet
 		if err := db.First(&pet, id).Error; err != nil {
 			http.Error(w, "Pet not found", http.StatusNotFound)
@@ -48,7 +48,7 @@ func EditUserPet(db *gorm.DB) http.HandlerFunc {
 
 func DeleteUserPet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.URL.Query().Get("id")
+		id := chi.URLParam(r, "id")
 		var pet migrations.PersonalPet
 		if err := db.First(&pet, id).Error; err != nil {
 			http.Error(w, "Pet not found", http.StatusNotFound)
@@ -65,7 +65,7 @@ func DeleteUserPet(db *gorm.DB) http.HandlerFunc {
 
 func FetchUserPets(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.URL.Query().Get("id")
+		id := chi.URLParam(r, "id")
 		var pet migrations.PersonalPet
 		if err := db.First(&pet, id).Error; err != nil {
 			http.Error(w, "Pet not found", http.StatusNotFound)

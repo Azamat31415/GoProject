@@ -4,6 +4,7 @@ import (
 	"GoProject/migrations"
 	"encoding/json"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -22,7 +23,7 @@ func ChooseDeliveryMethod(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		orderID := r.URL.Query().Get("order_id")
+		orderID := chi.URLParam(r, "order_id")
 		var order migrations.Order
 
 		if err := db.First(&order, orderID).Error; err != nil {
