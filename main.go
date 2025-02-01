@@ -6,6 +6,7 @@ import (
 	"GoProject/routes"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/cors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -27,6 +28,14 @@ func main() {
 
 	// Initialize chi router
 	r := chi.NewRouter()
+
+	// Настройка CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"}, // Разрешаем доступ с вашего фронтенда
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
+	r.Use(c.Handler) // Применяем CORS
 
 	// Set up routes using the InitializeRoutes function
 	routes.InitializeRoutes(r, db)

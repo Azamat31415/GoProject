@@ -12,6 +12,8 @@ type Product struct {
 	Price       float64 `json:"price"`
 	Stock       int     `json:"stock"`
 	Category    string  `json:"category"`
+	Subcategory string  `json:"subcategory"`
+	Type        string  `json:"type"`
 }
 
 // MigrateProduct for creation of product table
