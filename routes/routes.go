@@ -16,12 +16,12 @@ import (
 func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	// Apply CORS middleware
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Frontend access
+		AllowedOrigins:   []string{"*"}, // Разрешаем запросы с любого источника
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
-		MaxAge:           300, // 5 minutes cache
+		MaxAge:           300,
 	}))
 
 	// Routes for products

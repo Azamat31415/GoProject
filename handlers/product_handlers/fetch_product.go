@@ -12,13 +12,16 @@ import (
 
 func FetchAllProducts(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var products []migrations.Product
+		// Получаем параметры из запроса
 		category := r.URL.Query().Get("category")
 		subcategory := r.URL.Query().Get("subcategory")
 		productType := r.URL.Query().Get("type")
 
-		// Формируем запрос для фильтрации
+		// Создаем слайс для продуктов
+		var products []migrations.Product
 		query := db.Model(&migrations.Product{})
+
+		// Добавляем условия для фильтрации
 		if category != "" {
 			query = query.Where("category = ?", category)
 		}
@@ -29,14 +32,14 @@ func FetchAllProducts(db *gorm.DB) http.HandlerFunc {
 			query = query.Where("type = ?", productType)
 		}
 
-		// Получаем продукты, соответствующие фильтрам
+		// Выполняем запрос к базе данных
 		if err := query.Find(&products).Error; err != nil {
-			http.Error(w, "Failed to fetch products", http.StatusInternalServerError)
+			http.Error(w, "Error fetching products", http.StatusInternalServerError)
 			return
 		}
 
+		// Возвращаем данные в формате JSON
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(products)
 	}
 }

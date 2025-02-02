@@ -1,65 +1,50 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 
 const ProductsPage = () => {
-    const { category, subcategory, type } = useParams();
+    const { category, subcategory, type } = useParams(); // Получаем параметры через useParams
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        console.log(`Fetching products for category: ${category}, subcategory: ${subcategory}, type: ${type}`);
+
         const fetchProducts = async () => {
             try {
-                let url = `http://localhost:8080/products?category=${category}`;
-                if (subcategory) url += `&subcategory=${subcategory}`;
-                if (type) url += `&type=${type}`;
-
-                // Логируем URL для запроса
-                console.log('Fetching from URL:', url);
-
-                const response = await fetch(url);
-
-                // Логируем статус ответа
-                console.log('Response status:', response.status);
-
-                // Логируем заголовки ответа
-                console.log('Response headers:', response.headers);
-
-                // Логируем тело ответа (текстовый формат, до того как преобразуем его в JSON)
-                const text = await response.text();
-                console.log('Response body (raw):', text);
+                const response = await fetch(`http://localhost:8080/products?category=${category}&subcategory=${subcategory}&type=${type}`);
 
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch products: ${response.statusText}`);
+                    throw new Error(`HTTP Error ${response.status}`);
                 }
 
-                // Пробуем обработать ответ как JSON
-                const data = JSON.parse(text);
-                console.log('Fetched products:', data);
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Invalid JSON response from server");
+                }
 
-                // Устанавливаем состояние с полученными продуктами
-                setProducts(data);
-            } catch (err) {
-                // Логируем ошибку, если что-то пошло не так
-                console.error('Error:', err.message);
-                setError(err.message);
+                const data = await response.json();
+                console.log("Fetched data:", data);
+
+                setProducts(data); // Обновляем данные только после успешного получения
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                setError(error.message);
             } finally {
-                // Завершаем загрузку
                 setLoading(false);
             }
         };
 
-        // Запуск асинхронной функции
         fetchProducts();
-    }, [category, subcategory, type]);
+    }, [category, subcategory, type]); // Зависимости — только строки (не объекты)
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div>
-            <h1>{category} - {subcategory} - {type}</h1>
+        <div className="products-page">
+            <h2>Products: {category} - {subcategory} - {type}</h2>
             <div className="product-list">
                 {products.length > 0 ? (
                     products.map((product) => (
@@ -68,7 +53,7 @@ const ProductsPage = () => {
                             name={product.name}
                             description={product.description}
                             price={product.price}
-                            image={product.image || 'https://catspaw.ru/wp-content/uploads/2016/06/Ela_Kaimo.jpg?hash=a89deb3661b481b73e552578bec263d3'}  // Если изображение не указано, использовать дефолтное
+                            image={product.image || 'https://catspaw.ru/wp-content/uploads/2016/06/Ela_Kaimo.jpg?hash=a89deb3661b481b73e552578bec263d3'}
                         />
                     ))
                 ) : (
