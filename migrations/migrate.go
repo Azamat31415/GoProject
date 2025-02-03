@@ -26,6 +26,9 @@ func MigrateAll(db *gorm.DB) error {
 	if err := MigrateSubscriptionPayment(db); err != nil {
 		return err
 	}
+	if err := MigrateCart(db); err != nil {
+		return err
+	}
 
 	return nil
 }

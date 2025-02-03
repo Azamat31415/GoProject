@@ -1,4 +1,4 @@
-package product_handlers
+package product
 
 import (
 	"GoProject/migrations"

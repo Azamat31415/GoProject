@@ -1,4 +1,4 @@
-package personal_pet_handlers
+package personal_pet
 
 import (
 	"GoProject/migrations"

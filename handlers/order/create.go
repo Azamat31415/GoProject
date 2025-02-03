@@ -1,4 +1,4 @@
-package order_handlers
+package order
 
 import (
 	"GoProject/migrations"

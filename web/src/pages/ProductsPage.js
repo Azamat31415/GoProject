@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductCard from "../components/ProductCard"; // Импортируем компонент карточки
+import ProductCard from "../components/ProductCard";
 
 const ProductsPage = () => {
     const { category, subcategory, type } = useParams();
@@ -38,7 +38,7 @@ const ProductsPage = () => {
             <div className="product-list">
                 {products.length > 0 ? (
                     products.map((product) => (
-                        <ProductCard key={product.id} product={product} /> // Используем компонент карточки
+                        <ProductCard key={product.id} product={product} />
                     ))
                 ) : (
                     <p>No products found</p>

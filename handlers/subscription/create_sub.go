@@ -1,4 +1,4 @@
-package subscription_handlers
+package subscription
 
 import (
 	"GoProject/migrations"

@@ -1,4 +1,4 @@
-package order_handlers
+package order
 
 import (
 	"GoProject/migrations"
@@ -10,7 +10,7 @@ import (
 )
 
 type UpdateOrderStatusRequest struct {
-	Status string `json:"status"` // Новый статус заказа
+	Status string `json:"status"`
 }
 
 func UpdateOrderStatus(db *gorm.DB) http.HandlerFunc {
