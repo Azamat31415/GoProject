@@ -62,14 +62,12 @@ func UpdateCartItemQuantity(db *gorm.DB) http.HandlerFunc {
 		cartItemID := chi.URLParam(r, "id")
 		quantity := chi.URLParam(r, "quantity")
 
-		// Преобразуем количество в целое число
 		newQuantity, err := strconv.Atoi(quantity)
 		if err != nil || newQuantity <= 0 {
 			http.Error(w, "Invalid quantity", http.StatusBadRequest)
 			return
 		}
 
-		// Ищем товар в корзине по ID
 		var existingCartItem migrations.CartItem
 		err = db.Where("id = ?", cartItemID).First(&existingCartItem).Error
 		if err != nil {
@@ -77,7 +75,6 @@ func UpdateCartItemQuantity(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		// Обновляем количество товара
 		existingCartItem.Quantity = newQuantity
 		if err := db.Save(&existingCartItem).Error; err != nil {
 			http.Error(w, "Failed to update cart item quantity", http.StatusInternalServerError)
@@ -141,5 +138,26 @@ func RemoveFromCart(db *gorm.DB) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]string{"message": "Item permanently removed from cart"})
+	}
+}
+
+func GetProductIDsByUser(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := chi.URLParam(r, "user_id")
+
+		var cartItems []migrations.CartItem
+
+		if err := db.Where("user_id = ?", userID).Find(&cartItems).Error; err != nil {
+			http.Error(w, "Failed to retrieve cart items", http.StatusInternalServerError)
+			return
+		}
+
+		var productIDs []uint
+		for _, item := range cartItems {
+			productIDs = append(productIDs, item.ProductID)
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(productIDs)
 	}
 }
