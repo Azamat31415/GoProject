@@ -16,7 +16,7 @@ import (
 func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	// Apply CORS middleware
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Разрешаем запросы с любого источника
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -34,6 +34,7 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	// Routes for authentication
 	r.Post("/register", auth_handlers.RegisterHandler(db))
 	r.Post("/login", auth_handlers.LoginHandler(db))
+	r.Get("/profile", auth_handlers.ProfileHandler(db))
 
 	// Routes for orders
 	r.Post("/orders", order_handlers.CreateOrder(db))

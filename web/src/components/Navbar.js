@@ -70,6 +70,7 @@ const categories = [
 
 const Navbar = () => {
     const [activeCategory, setActiveCategory] = useState(null);
+    const token = localStorage.getItem("token");
 
     const handleCategoryClick = useCallback((categoryName) => {
         setActiveCategory((prevActiveCategory) =>
@@ -88,7 +89,9 @@ const Navbar = () => {
             <header className="header">
                 <Link to="/" className="logo">Pet Store</Link>
                 <div className="nav-links">
-                    <Link to="/profile">Profile</Link>
+                    <Link to="/register">Register</Link>
+                    <Link to="/login">Login</Link>
+                    {token && <Link to="/profile">Profile</Link>} 
                     <Link to="/cart">Cart</Link>
                 </div>
             </header>

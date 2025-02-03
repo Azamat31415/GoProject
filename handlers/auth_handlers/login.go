@@ -1,17 +1,14 @@
 package auth_handlers
 
 import (
+	"GoProject/configs"
+	"GoProject/migrations"
 	"encoding/json"
-	"net/http"
-	"time"
-
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
-
-	"GoProject/migrations"
+	"net/http"
+	"time"
 )
-
-var jwtSecret = []byte("9Q7MvM4M7jpDq6fjk8jMKVuY=n8RygTXGphFcz3L7txy")
 
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -29,7 +26,7 @@ func GenerateJWT(userID uint) (string, error) {
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString(config.JwtSecret)
 }
 
 func LoginHandler(db *gorm.DB) http.HandlerFunc {

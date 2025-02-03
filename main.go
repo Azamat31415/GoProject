@@ -29,12 +29,16 @@ func main() {
 	// Initialize chi router
 	r := chi.NewRouter()
 
-	// Настройка CORS
+	// CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000"}, // Разрешаем доступ с вашего фронтенда
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders: []string{"Content-Type"},
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Разрешаем запросы с фронтенда
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
 	})
+
 	r.Use(c.Handler) // Применяем CORS
 
 	// Set up routes using the InitializeRoutes function

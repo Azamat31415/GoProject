@@ -32,13 +32,11 @@ func FetchAllProducts(db *gorm.DB) http.HandlerFunc {
 			query = query.Where("type = ?", productType)
 		}
 
-		// Выполняем запрос к базе данных
 		if err := query.Find(&products).Error; err != nil {
 			http.Error(w, "Error fetching products", http.StatusInternalServerError)
 			return
 		}
 
-		// Возвращаем данные в формате JSON
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(products)
 	}

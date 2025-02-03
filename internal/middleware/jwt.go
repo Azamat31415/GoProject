@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"GoProject/handlers/auth_handlers"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -21,15 +19,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-		if auth_handlers.IsTokenRevoked(tokenString) {
-			http.Error(w, "Token has been revoked", http.StatusUnauthorized)
-			return
-		}
-
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if token.Method != jwt.SigningMethodHS256 {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Method.Alg())
-			}
 			return jwtSecret, nil
 		})
 
