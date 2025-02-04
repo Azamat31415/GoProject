@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 
 	"GoProject/handlers/auth"
@@ -69,14 +67,16 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Put("/subscriptions/{id}/renew", subscription.RenewSubscription(db))
 
 	// Добавляем логирование запроса в /cart
-	r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
-		fmt.Println("Received JSON:", string(body)) // Логируем данные
-		cart.AddToCart(db)(w, r)
-	})
+	//r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
+	//	body, _ := io.ReadAll(r.Body)
+	//	fmt.Println("Received JSON:", string(body)) // Логируем данные
+	//	cart.AddToCart(db)(w, r)
+	//})
+	r.Post("/cart", cart.AddToCart(db))
 	r.Delete("/cart/{id}", cart.RemoveFromCart(db))
 	r.Put("/cart/update/{id}/{quantity}", cart.UpdateCartItemQuantity(db))
 	r.Delete("/cart/{id}/byone", cart.RemoveOneItemFromCart(db))
+	//r.Get("/cart/user/{user_id}/products", cart.GetProductIDsByUser(db))
 	r.Get("/cart/user/{user_id}/products", cart.GetCartByUser(db))
 
 }
