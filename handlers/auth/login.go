@@ -18,6 +18,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Message string `json:"message"`
 	Token   string `json:"token,omitempty"`
+	UserID  uint   `json:"user_id"`
 }
 
 func GenerateJWT(userID uint) (string, error) {
@@ -36,28 +37,30 @@ func LoginHandler(db *gorm.DB) http.HandlerFunc {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
-		if loginData.Email == "" || loginData.Password == "" {
-			http.Error(w, "Email and password are required", http.StatusBadRequest)
-			return
-		}
+
 		var user migrations.User
 		if err := db.Where("email = ?", loginData.Email).First(&user).Error; err != nil {
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 			return
 		}
+
 		if !user.CheckPassword(loginData.Password) {
 			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 			return
 		}
+
 		token, err := GenerateJWT(user.ID)
 		if err != nil {
 			http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 			return
 		}
+
 		response := LoginResponse{
 			Message: "Login successful",
 			Token:   token,
+			UserID:  user.ID,
 		}
+
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(response)
 	}

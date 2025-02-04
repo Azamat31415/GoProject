@@ -25,6 +25,18 @@ const Login = () => {
 
         if (response.ok) {
             localStorage.setItem("token", data.token);
+
+            // Декодируем JWT и извлекаем userID
+            const tokenParts = data.token.split('.');
+            if (tokenParts.length === 3) {
+                try {
+                    const decodedPayload = JSON.parse(atob(tokenParts[1]));
+                    localStorage.setItem("userID", decodedPayload.user_id);
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                }
+            }
+
             navigate("/profile");
         } else {
             setError(data.message || "Login failed");

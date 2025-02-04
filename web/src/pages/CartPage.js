@@ -1,27 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import "./CartPage.css";
 
 const CartPage = () => {
-    const [cart, setCart] = useState([
-        {
-            id: 1,
-            name: "Product 1",
-            description: "Description of product 1",
-            price: 100,
-            image: "https://via.placeholder.com/150",
-        },
-        {
-            id: 2,
-            name: "Product 2",
-            description: "Description of product 2",
-            price: 200,
-            image: "https://via.placeholder.com/150",
-        },
-    ]); // Временные данные, замените на реальный источник
+    const [cart, setCart] = useState([]);
 
-    const removeFromCart = (id) => {
-        setCart(cart.filter((product) => product.id !== id));
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            const userID = localStorage.getItem("userID");
+            if (!userID) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/cart/user/${userID}/products`);
+                if (!response.ok) throw new Error("Failed to fetch cart items");
+
+                const data = await response.json();
+                setCart(data); // Ожидается, что API вернет массив продуктов
+            } catch (error) {
+                console.error("Error fetching cart:", error);
+            }
+        };
+
+        fetchCartItems();
+    }, []);
+
+    const removeFromCart = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8080/cart/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) throw new Error("Failed to remove item");
+
+            setCart(cart.filter((product) => product.id !== id));
+        } catch (error) {
+            console.error("Error removing item:", error);
+        }
     };
 
     const totalPrice = cart.reduce((sum, product) => sum + product.price, 0);

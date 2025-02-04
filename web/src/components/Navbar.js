@@ -91,7 +91,7 @@ const Navbar = () => {
                 <div className="nav-links">
                     <Link to="/register">Register</Link>
                     <Link to="/login">Login</Link>
-                    {token && <Link to="/profile">Profile</Link>} 
+                    <Link to="/profile">Profile</Link>
                     <Link to="/cart">Cart</Link>
                 </div>
             </header>
