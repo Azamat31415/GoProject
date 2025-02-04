@@ -1,8 +1,11 @@
 package routes
 
 import (
+	"fmt"
+	"io"
+	"net/http"
+
 	"GoProject/handlers/auth"
-	"GoProject/handlers/auth_handlers"
 	"GoProject/handlers/cart"
 	"GoProject/handlers/order"
 	"GoProject/handlers/personal_pet"
@@ -12,7 +15,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
@@ -36,7 +38,7 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	// Routes for authentication
 	r.Post("/register", auth.RegisterHandler(db))
 	r.Post("/login", auth.LoginHandler(db))
-	r.Get("/profile", auth_handlers.ProfileHandler(db))
+	r.Get("/profile", auth.ProfileHandler(db))
 
 	// Routes for orders
 	r.Post("/orders", order.CreateOrder(db))
@@ -66,7 +68,12 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Delete("/subscriptions/{id}", subscription.DeleteSubscription(db))
 	r.Put("/subscriptions/{id}/renew", subscription.RenewSubscription(db))
 
-	r.Post("/cart", cart.AddToCart(db))
+	// Добавляем логирование запроса в /cart
+	r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		fmt.Println("Received JSON:", string(body)) // Логируем данные
+		cart.AddToCart(db)(w, r)
+	})
 	r.Delete("/cart/{id}", cart.RemoveFromCart(db))
 	r.Put("/cart/update/{id}/{quantity}", cart.UpdateCartItemQuantity(db))
 	r.Delete("/cart/{id}/byone", cart.RemoveOneItemFromCart(db))

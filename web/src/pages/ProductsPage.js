@@ -9,8 +9,6 @@ const ProductsPage = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        console.log(`Fetching products for category: ${category}, subcategory: ${subcategory}, type: ${type}`);
-
         fetch(`http://localhost:8080/products?category=${category}&subcategory=${subcategory}&type=${type}`)
             .then(response => {
                 if (!response.ok) {
@@ -18,16 +16,34 @@ const ProductsPage = () => {
                 }
                 return response.json();
             })
-            .then(data => {
-                console.log("Fetched data:", data);
-                setProducts(data);
-            })
-            .catch(error => {
-                console.error("Error fetching products:", error);
-                setError(error.message);
-            })
+            .then(data => setProducts(data))
+            .catch(error => setError(error.message))
             .finally(() => setLoading(false));
     }, [category, subcategory, type]);
+
+    const addToCart = (productId) => {
+        const userId = 1;
+        const cartItem = { user_id: userId, product_id: productId, quantity: 1 };
+
+        fetch("http://localhost:8080/cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(cartItem),
+        })
+            .then(response => response.text())
+            .then(text => {
+                console.log("Ответ от сервера:", text);
+                try {
+                    const json = JSON.parse(text);
+                    alert("Product added to cart successfully");
+                } catch (e) {
+                    alert("Invalid server response: " + text);
+                }
+            })
+            .catch(error => alert(error.message));
+    };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -38,7 +54,7 @@ const ProductsPage = () => {
             <div className="product-list">
                 {products.length > 0 ? (
                     products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product.ID} product={product} addToCart={addToCart} />
                     ))
                 ) : (
                     <p>No products found</p>
