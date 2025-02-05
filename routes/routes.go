@@ -42,6 +42,8 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Post("/orders", order.CreateOrder(db))
 	r.Put("/orders/{id}/status/update", order.UpdateOrderStatus(db))
 	r.Put("/orders/{order_id}/delivery", order.ChooseDeliveryMethod(db))
+	r.Get("/orders", order.GetOrders(db))
+	r.Get("/order-history/{user_id}", order.GetOrderHistory(db))
 
 	// Protected routes using JWT middleware
 	r.Group(func(protected chi.Router) {
