@@ -3,6 +3,7 @@ import "./CartPage.css";
 
 const CartPage = () => {
     const [cart, setCart] = useState([]);
+    const [selectedItems, setSelectedItems] = useState([]);
 
     useEffect(() => {
         fetchCartItems();
@@ -20,44 +21,43 @@ const CartPage = () => {
         try {
             const response = await fetch(`http://localhost:8080/cart/user/${userID}/products`, {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             if (!response.ok) throw new Error("Failed to fetch cart items");
 
             const data = await response.json();
-            console.log("Cart data from server:", data); // Логируем, что пришло с сервера
-            setCart(data);
+            setCart(data || []); // Если data === null, устанавливаем пустой массив
         } catch (error) {
             console.error("Error fetching cart:", error);
+            setCart([]); // В случае ошибки устанавливаем cart как пустой массив
         }
-
-};
+    };
 
     const updateQuantity = async (id, quantity) => {
-        if (quantity < 0) return;
+        if (quantity < 1) return;
 
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/cart/${id}/quantity/${quantity}`, {
                 method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             if (!response.ok) throw new Error("Failed to update quantity");
 
-            if (quantity === 0) {
-                setCart(cart.filter((item) => item.id !== id));
-            } else {
-                setCart(cart.map((item) => (item.id === id ? { ...item, quantity } : item)));
-            }
+            setCart(cart.map((item) => (item.id === id ? { ...item, quantity } : item)));
         } catch (error) {
             console.error("Error updating quantity:", error);
         }
+    };
+
+    const toggleSelection = (cartId) => {
+        setSelectedItems((prevSelected) =>
+            prevSelected.includes(cartId)
+                ? prevSelected.filter((id) => id !== cartId)
+                : [...prevSelected, cartId]
+        );
     };
 
     const removeFromCart = async (productID) => {
@@ -114,9 +114,9 @@ const CartPage = () => {
         }
     };
 
-
-
-
+    const proceedToCheckout = () => {
+        console.log("Selected Cart IDs for checkout:", selectedItems);
+    };
 
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const roundedTotal = Math.ceil(totalPrice * 100) / 100;
@@ -129,6 +129,12 @@ const CartPage = () => {
                     <div className="cart-list">
                         {cart.map((item) => (
                             <div key={item.id} className="cart-item">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedItems.includes(item.id)}
+                                    onChange={() => toggleSelection(item.id)}
+                                    className="cart-checkbox"
+                                />
                                 <div className="cart-item-details">
                                     <h3>{item.name}</h3>
                                     <p>Price: ${item.price}</p>
@@ -144,16 +150,20 @@ const CartPage = () => {
                                         <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
                                     </div>
                                 </div>
-                                <button
-                                    className="remove-button"
-                                    onClick={() => removeFromCart(item.id)}
-                                >
+                                <button className="remove-button" onClick={() => removeFromCart(item.id)}>
                                     Remove
                                 </button>
                             </div>
                         ))}
                     </div>
                     <h3>Total: ${roundedTotal}</h3>
+                    <button
+                        className="checkout-button"
+                        disabled={selectedItems.length === 0}
+                        onClick={proceedToCheckout}
+                    >
+                        Proceed to payment ({selectedItems.length})
+                    </button>
                 </>
             ) : (
                 <p>Your cart is empty.</p>
