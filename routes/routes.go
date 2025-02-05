@@ -78,5 +78,6 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Delete("/cart/{id}/byone", cart.RemoveOneItemFromCart(db))
 	//r.Get("/cart/user/{user_id}/products", cart.GetProductIDsByUser(db))
 	r.Get("/cart/user/{user_id}/products", cart.GetCartByUser(db))
+	r.Get("/cart/{user_id}/{product_id}", cart.GetCartID(db))
 
 }

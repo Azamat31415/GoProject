@@ -4,9 +4,15 @@ import "./ProductCard.css";
 const ProductCard = ({ product }) => {
     const handleAddToCart = async () => {
         const userID = localStorage.getItem("userID");
+        const token = localStorage.getItem("token"); // Получаем токен из localStorage
 
         if (!userID || isNaN(parseInt(userID))) {
             alert("Please log in to add items to your cart.");
+            return;
+        }
+
+        if (!token) {
+            alert("Authorization token is missing. Please log in again.");
             return;
         }
 
@@ -23,12 +29,12 @@ const ProductCard = ({ product }) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`, // Добавляем токен в заголовок
                 },
                 body: JSON.stringify(cartItem),
             });
 
-            const textResponse = await response.text(); // Читаем ответ как текст
-
+            const textResponse = await response.text();
             console.log("Response Text:", textResponse);
 
             if (!response.ok) {
@@ -41,6 +47,7 @@ const ProductCard = ({ product }) => {
             alert("Error adding item to cart");
         }
     };
+
 
     return (
         <div className="product-card">

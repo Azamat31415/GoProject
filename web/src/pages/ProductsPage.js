@@ -22,28 +22,38 @@ const ProductsPage = () => {
     }, [category, subcategory, type]);
 
     const addToCart = (productId) => {
-        const userId = 1;
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("user_id");
+
+        if (!token || !userId) {
+            alert("You need to log in to add items to the cart");
+            return;
+        }
+
         const cartItem = { user_id: userId, product_id: productId, quantity: 1 };
+
+        console.log("Adding to cart:", cartItem); // Логирование данных
 
         fetch("http://localhost:8080/cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Заголовок авторизации
             },
             body: JSON.stringify(cartItem),
         })
-            .then(response => response.text())
-            .then(text => {
-                console.log("Ответ от сервера:", text);
-                try {
-                    const json = JSON.parse(text);
-                    alert("Product added to cart successfully");
-                } catch (e) {
-                    alert("Invalid server response: " + text);
-                }
+            .then((response) => {
+                console.log("Response status:", response.status); // Логирование статуса ответа
+                return response.json(); // Используем .json() вместо .text()
             })
-            .catch(error => alert(error.message));
+            .then((json) => {
+                console.log("Server response:", json); // Логирование данных ответа
+                alert("Product added to cart successfully");
+            })
+            .catch((error) => alert(error.message));
     };
+
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
