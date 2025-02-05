@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CartPage.css";
 
 const CartPage = () => {
     const [cart, setCart] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchCartItems();
@@ -27,10 +29,10 @@ const CartPage = () => {
             if (!response.ok) throw new Error("Failed to fetch cart items");
 
             const data = await response.json();
-            setCart(data || []); // Если data === null, устанавливаем пустой массив
+            setCart(data || []);
         } catch (error) {
             console.error("Error fetching cart:", error);
-            setCart([]); // В случае ошибки устанавливаем cart как пустой массив
+            setCart([]);
         }
     };
 
@@ -115,7 +117,8 @@ const CartPage = () => {
     };
 
     const proceedToCheckout = () => {
-        console.log("Selected Cart IDs for checkout:", selectedItems);
+        localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+        navigate("/payment");
     };
 
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -162,7 +165,7 @@ const CartPage = () => {
                         disabled={selectedItems.length === 0}
                         onClick={proceedToCheckout}
                     >
-                        Proceed to payment ({selectedItems.length})
+                        Proceed to Payment ({selectedItems.length})
                     </button>
                 </>
             ) : (

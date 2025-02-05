@@ -53,6 +53,7 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 
 		protected.Post("/logout", auth.LogoutHandler())
 	})
+	r.Get("/users/{id}/address", auth.GetUserAddress(db))
 
 	// Routes for pets
 	r.Post("/pets", personal_pet.AddUserPet(db))
