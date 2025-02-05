@@ -89,6 +89,7 @@ const Navbar = () => {
             <header className="header">
                 <Link to="/" className="logo">Pet Store</Link>
                 <div className="nav-links">
+                    <Link to="/order-history">Order History</Link>
                     <Link to="/register">Register</Link>
                     <Link to="/login">Login</Link>
                     <Link to="/profile">Profile</Link>
