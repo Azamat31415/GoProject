@@ -131,7 +131,6 @@ const PaymentPage = () => {
             const responseData = JSON.parse(responseText);
             console.log("Order placed:", responseData);
 
-            // Прочитать cartId и удалить товар из корзины
             await Promise.all(
                 orderDetails.products.map(async (item) => {
                     // Получение ID корзины для каждого продукта
@@ -147,7 +146,6 @@ const PaymentPage = () => {
                         return;
                     }
 
-                    // Пытаемся распарсить ответ и вывести в консоль
                     let cartData;
                     try {
                         cartData = JSON.parse(cartResponseText);
@@ -168,7 +166,6 @@ const PaymentPage = () => {
                         return;
                     }
 
-                    // URL для удаления с использованием cartId
                     const deleteResponse = await fetch(
                         `http://localhost:8080/cart/${cartId}`, // Правильный путь с cartId
                         {

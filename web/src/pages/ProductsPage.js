@@ -32,22 +32,22 @@ const ProductsPage = () => {
 
         const cartItem = { user_id: userId, product_id: productId, quantity: 1 };
 
-        console.log("Adding to cart:", cartItem); // Логирование данных
+        console.log("Adding to cart:", cartItem);
 
         fetch("http://localhost:8080/cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, // Заголовок авторизации
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(cartItem),
         })
             .then((response) => {
-                console.log("Response status:", response.status); // Логирование статуса ответа
-                return response.json(); // Используем .json() вместо .text()
+                console.log("Response status:", response.status);
+                return response.json();
             })
             .then((json) => {
-                console.log("Server response:", json); // Логирование данных ответа
+                console.log("Server response:", json);
                 alert("Product added to cart successfully");
             })
             .catch((error) => alert(error.message));

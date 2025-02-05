@@ -4,7 +4,7 @@ import "./ProductCard.css";
 const ProductCard = ({ product }) => {
     const handleAddToCart = async () => {
         const userID = localStorage.getItem("userID");
-        const token = localStorage.getItem("token"); // Получаем токен из localStorage
+        const token = localStorage.getItem("token");
 
         if (!userID || isNaN(parseInt(userID))) {
             alert("Please log in to add items to your cart.");
@@ -29,7 +29,7 @@ const ProductCard = ({ product }) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`, // Добавляем токен в заголовок
+                    "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify(cartItem),
             });

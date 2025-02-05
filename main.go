@@ -31,7 +31,7 @@ func main() {
 
 	// CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Разрешаем запросы с фронтенда
+		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Link"},
@@ -39,7 +39,7 @@ func main() {
 		MaxAge:           300,
 	})
 
-	r.Use(c.Handler) // Применяем CORS
+	r.Use(c.Handler)
 
 	// Set up routes using the InitializeRoutes function
 	routes.InitializeRoutes(r, db)

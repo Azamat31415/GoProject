@@ -13,7 +13,7 @@ const Register = () => {
     });
 
     const [error, setError] = useState("");
-    const [errorMessage, setErrorMessage] = useState(""); // Добавлено состояние для отображения ошибки
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
     const handleChange = (e) => {

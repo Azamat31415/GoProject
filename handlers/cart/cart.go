@@ -12,7 +12,6 @@ import (
 
 func AddToCart(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Проверяем JWT и получаем пользователя
 		user, err := config.VerifyJWT(w, r, db)
 		if err != nil || user == nil {
 			return // Ошибка уже обработана в VerifyJWT
@@ -37,7 +36,6 @@ func AddToCart(db *gorm.DB) http.HandlerFunc {
 		err = db.Where("user_id = ? AND product_id = ?", user.ID, cartItem.ProductID).First(&existingCartItem).Error
 
 		if err == nil {
-			// Если товар уже в корзине, увеличиваем количество
 			existingCartItem.Quantity += cartItem.Quantity
 			if err := db.Save(&existingCartItem).Error; err != nil {
 				http.Error(w, "Failed to update cart item", http.StatusInternalServerError)
@@ -88,7 +86,6 @@ func UpdateCartItemQuantity(db *gorm.DB) http.HandlerFunc {
 		}
 
 		if newQuantity == 0 {
-			// Если количество = 0, удаляем товар
 			if err := db.Delete(&existingCartItem).Error; err != nil {
 				http.Error(w, "Failed to remove item from cart", http.StatusInternalServerError)
 				return

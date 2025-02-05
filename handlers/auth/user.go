@@ -21,7 +21,6 @@ func GetUserAddress(db *gorm.DB) http.HandlerFunc {
 		}
 
 		var user migrations.User
-		// Получаем пользователя по ID
 		if err := db.First(&user, userID).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				http.Error(w, "User not found", http.StatusNotFound)
@@ -31,16 +30,13 @@ func GetUserAddress(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		// Ответ в формате JSON с использованием json.NewEncoder
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		// Создаем структуру для ответа
 		response := map[string]string{
 			"address": user.Address,
 		}
 
-		// Кодируем в JSON
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		}
