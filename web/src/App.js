@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import "./App.css";
 import CartPage from "./pages/CartPage";
+import PaymentPage from "./pages/PaymentPage";
+import OrderHistory from "./pages/OrderHistory";
 
 function App() {
     return (
@@ -21,6 +23,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/cart" element={<CartPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/order-history" element={<OrderHistory />} />
             </Routes>
         </Router>
     );
