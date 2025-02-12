@@ -71,33 +71,27 @@ const categories = [
 const Navbar = () => {
     const [activeCategory, setActiveCategory] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
+            setIsLoggedIn(true);
             fetch("http://localhost:8080/profile", {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.is_admin) {
-                        setIsAdmin(true);
-                    }
+                    if (data.is_admin) setIsAdmin(true);
                 })
-                .catch((error) => {
-                    console.error("Error fetching profile:", error);
-                });
+                .catch((error) => console.error("Error fetching profile:", error));
         }
     }, []);
 
     const handleCategoryClick = useCallback((categoryName) => {
-        setActiveCategory((prevActiveCategory) =>
-            prevActiveCategory === categoryName ? null : categoryName
-        );
+        setActiveCategory((prev) => (prev === categoryName ? null : categoryName));
     }, []);
 
     const handleOutsideClick = (event) => {
@@ -112,11 +106,9 @@ const Navbar = () => {
                 <Link to="/" className="logo">Pet Store</Link>
                 <div className="nav-links">
                     <Link to="/order-history">Order History</Link>
-                    <Link to="/register">Register</Link>
-                    <Link to="/login">Login</Link>
-                    <Link to="/profile">Profile</Link>
+                    {!isLoggedIn && <><Link to="/register">Register</Link><Link to="/login">Login</Link></>}
+                    {isLoggedIn && <><Link to="/profile">Profile</Link></>}
                     <Link to="/cart">Cart</Link>
-                    {isAdmin && <button onClick={() => navigate('/admin-panel')} className="admin-button">Admin Panel</button>}
                 </div>
             </header>
 

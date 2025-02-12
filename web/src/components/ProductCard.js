@@ -1,10 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProductCard.css";
 
 const ProductCard = ({ product }) => {
+    const navigate = useNavigate();
+    const userRole = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+
     const handleAddToCart = async () => {
         const userID = localStorage.getItem("userID");
-        const token = localStorage.getItem("token");
 
         if (!userID || isNaN(parseInt(userID))) {
             alert("Please log in to add items to your cart.");
@@ -22,8 +26,6 @@ const ProductCard = ({ product }) => {
             quantity: 1
         };
 
-        console.log("Sending cart item:", JSON.stringify(cartItem));
-
         try {
             const response = await fetch("http://localhost:8080/cart", {
                 method: "POST",
@@ -34,11 +36,8 @@ const ProductCard = ({ product }) => {
                 body: JSON.stringify(cartItem),
             });
 
-            const textResponse = await response.text();
-            console.log("Response Text:", textResponse);
-
             if (!response.ok) {
-                throw new Error(textResponse || "Failed to add item to cart");
+                throw new Error("Failed to add item to cart");
             }
 
             alert("Item added to cart!");
@@ -48,6 +47,28 @@ const ProductCard = ({ product }) => {
         }
     };
 
+    const handleDeleteProduct = async () => {
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/products/${product.ID}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to delete product");
+            }
+
+            alert("Product deleted successfully!");
+            window.location.reload(); // Refresh the page to update the product list
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error deleting product");
+        }
+    };
 
     return (
         <div className="product-card">
@@ -62,6 +83,16 @@ const ProductCard = ({ product }) => {
             <button className="add-to-cart-button" onClick={handleAddToCart}>
                 Add to Cart
             </button>
+            {userRole === "admin" && (
+                <>
+                    <button className="edit-product-button" onClick={() => navigate(`/edit-product/${product.ID}`)}>
+                        Edit
+                    </button>
+                    <button className="delete-product-button" onClick={handleDeleteProduct}>
+                        Delete
+                    </button>
+                </>
+            )}
         </div>
     );
 };
