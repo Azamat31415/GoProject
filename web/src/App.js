@@ -9,7 +9,7 @@ import "./App.css";
 import CartPage from "./pages/CartPage";
 import PaymentPage from "./pages/PaymentPage";
 import OrderHistory from "./pages/OrderHistory";
-import AdminPanel from './pages/AdminPanel';
+import AdminPanel from "./pages/AdminPanel";
 
 function App() {
     return (

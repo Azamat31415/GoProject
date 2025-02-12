@@ -14,7 +14,7 @@ type User struct {
 	LastName  string
 	Address   string
 	Phone     string
-	Role      string
+	Role      string `gorm:"default:user"`
 }
 
 // UserRegistration for data structure of registration

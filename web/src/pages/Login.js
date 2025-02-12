@@ -25,6 +25,7 @@ const Login = () => {
 
         if (response.ok) {
             localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.role);
 
             // Декодируем JWT и извлекаем userID
             const tokenParts = data.token.split('.');
