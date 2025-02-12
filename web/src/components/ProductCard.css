@@ -48,3 +48,40 @@
     background-color: #218838;
 }
 
+.edit-product-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-right: 5px;
+    width: 45%;
+}
+
+.edit-product-button:hover {
+    background-color: #0056b3;
+}
+
+.delete-product-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 45%;
+}
+
+.delete-product-button:hover {
+    background-color: #c82333;
+}
+
+.product-card > .edit-product-button,
+.product-card > .delete-product-button {
+    display: inline-block;
+}
+
+
