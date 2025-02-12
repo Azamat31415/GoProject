@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import "./edit.css";
 
 const EditProduct = () => {
     const { id } = useParams();
@@ -49,9 +50,9 @@ const EditProduct = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div>
+        <div className="edit-product-container">
             <h2>Edit Product</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="edit-product-form">
                 <label>
                     Name:
                     <input type="text" name="name" value={product.name} onChange={handleChange} required />
