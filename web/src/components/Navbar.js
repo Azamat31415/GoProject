@@ -106,6 +106,7 @@ const Navbar = () => {
                 <Link to="/" className="logo">Pet Store</Link>
                 <div className="nav-links">
                     <Link to="/order-history">Order History</Link>
+                    <Link to="/subscription">Subscription</Link>
                     {!isLoggedIn && <><Link to="/register">Register</Link><Link to="/login">Login</Link></>}
                     {isLoggedIn && <><Link to="/profile">Profile</Link></>}
                     <Link to="/cart">Cart</Link>

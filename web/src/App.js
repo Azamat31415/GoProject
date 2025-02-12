@@ -12,6 +12,8 @@ import OrderHistory from "./pages/OrderHistory";
 import AdminPanel from "./pages/AdminPanel";
 import EditProduct from "./pages/EditProduct";
 import AddPet from "./pages/AddPet";
+import SubscriptionPage from "./pages/SubscriptionPage";
+
 
 function App() {
     return (
@@ -31,6 +33,7 @@ function App() {
                 <Route path="/admin-panel" element={<AdminPanel />} />
                 <Route path="/edit-product/:id" element={<EditProduct />} />
                 <Route path="/add-pet" element={<AddPet />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
             </Routes>
         </Router>
     );
