@@ -13,6 +13,7 @@ import AdminPanel from "./pages/AdminPanel";
 import EditProduct from "./pages/EditProduct";
 import AddPet from "./pages/AddPet";
 import SubscriptionPage from "./pages/SubscriptionPage";
+import EditPet from "./pages/EditPet";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/edit-product/:id" element={<EditProduct />} />
                 <Route path="/add-pet" element={<AddPet />} />
                 <Route path="/subscription" element={<SubscriptionPage />} />
+                <Route path="/edit-pet/:id" element={<EditPet />} />
             </Routes>
         </Router>
     );

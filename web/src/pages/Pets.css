@@ -130,3 +130,49 @@
     margin-bottom: 20px;
 }
 
+.edit-pet-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-pet-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.edit-pet-form label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.edit-pet-form input,
+.edit-pet-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.edit-pet-form button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.edit-pet-form button:hover {
+    background: #0056b3;
+}
+
+

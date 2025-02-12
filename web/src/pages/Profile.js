@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import "./Pets.css";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -18,29 +19,18 @@ const Profile = () => {
 
         fetch("http://localhost:8080/profile", {
             method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((response) => response.json())
             .then((data) => {
-                if (data.email) {
-                    setUserData(data);
-                } else {
-                    navigate("/login");
-                }
+                if (data.email) setUserData(data);
+                else navigate("/login");
             })
-            .catch((error) => {
-                console.error("Error fetching profile:", error);
-                navigate("/login");
-            });
+            .catch(() => navigate("/login"));
 
-        // Загружаем питомцев пользователя
         fetch(`http://localhost:8080/users/${userID}/pets`, {
             method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((response) => response.json())
             .then((data) => setPets(data))
@@ -48,10 +38,17 @@ const Profile = () => {
     }, [navigate, token, userID]);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("userID");
+        localStorage.clear();
         navigate("/login");
+    };
+
+    const handleDeletePet = (petID) => {
+        fetch(`http://localhost:8080/pets/${petID}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(() => setPets(pets.filter((pet) => pet.ID !== petID)))
+            .catch((error) => console.error("Error deleting pet:", error));
     };
 
     if (!userData) return <div>Loading...</div>;
@@ -63,13 +60,11 @@ const Profile = () => {
                 <p><strong>Email:</strong> {userData.email}</p>
                 <p><strong>Name:</strong> {userData.first_name} {userData.last_name}</p>
                 <p><strong>Phone:</strong> {userData.phone}</p>
-
                 {role === "admin" && (
                     <button className="admin-panel-button" onClick={() => navigate("/admin-panel")}>
                         Go to Admin Panel
                     </button>
                 )}
-
                 <button className="logout-button" onClick={handleLogout}>Log Out</button>
             </div>
 
@@ -82,6 +77,10 @@ const Profile = () => {
                             <h4>{pet.Name}</h4>
                             <p>Species: {pet.Species}</p>
                             <p>Age: {pet.Age}</p>
+                            <div className="pet-buttons">
+                                <button className="edit-pet-button" onClick={() => navigate(`/edit-pet/${pet.ID}`)}>Edit</button>
+                                <button className="delete-pet-button" onClick={() => handleDeletePet(pet.ID)}>Delete</button>
+                            </div>
                         </div>
                     ))
                 ) : (
