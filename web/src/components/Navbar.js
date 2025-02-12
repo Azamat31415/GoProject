@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { useState, useCallback, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const categories = [
     {
@@ -70,7 +70,29 @@ const categories = [
 
 const Navbar = () => {
     const [activeCategory, setActiveCategory] = useState(null);
-    const token = localStorage.getItem("token");
+    const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            fetch("http://localhost:8080/profile", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.is_admin) {
+                        setIsAdmin(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching profile:", error);
+                });
+        }
+    }, []);
 
     const handleCategoryClick = useCallback((categoryName) => {
         setActiveCategory((prevActiveCategory) =>
@@ -94,6 +116,7 @@ const Navbar = () => {
                     <Link to="/login">Login</Link>
                     <Link to="/profile">Profile</Link>
                     <Link to="/cart">Cart</Link>
+                    {isAdmin && <button onClick={() => navigate('/admin-panel')} className="admin-button">Admin Panel</button>}
                 </div>
             </header>
 

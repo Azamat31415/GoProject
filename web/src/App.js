@@ -9,6 +9,7 @@ import "./App.css";
 import CartPage from "./pages/CartPage";
 import PaymentPage from "./pages/PaymentPage";
 import OrderHistory from "./pages/OrderHistory";
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/order-history" element={<OrderHistory />} />
+                <Route path="/admin-panel" element={<AdminPanel />} />
             </Routes>
         </Router>
     );

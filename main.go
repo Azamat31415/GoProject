@@ -26,6 +26,13 @@ func main() {
 		log.Fatal("Failed to apply migrations:", err)
 	}
 
+	// Assign admin role to specific user
+	if err := migrations.AssignAdminRole(db); err != nil {
+		log.Printf("Error assigning admin role: %v", err)
+	} else {
+		fmt.Println("Admin role assignment complete.")
+	}
+
 	// Initialize chi router
 	r := chi.NewRouter()
 

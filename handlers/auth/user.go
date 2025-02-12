@@ -12,7 +12,6 @@ import (
 
 func GetUserAddress(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Извлекаем id из URL
 		id := chi.URLParam(r, "id")
 		userID, err := strconv.Atoi(id)
 		if err != nil {

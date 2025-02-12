@@ -21,9 +21,11 @@ type LoginResponse struct {
 	UserID  uint   `json:"user_id"`
 }
 
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(user migrations.User) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userID,
+		"user_id": user.ID,
+		"email":   user.Email,
+		"role":    user.Role,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -49,7 +51,7 @@ func LoginHandler(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		token, err := GenerateJWT(user.ID)
+		token, err := GenerateJWT(user)
 		if err != nil {
 			http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 			return

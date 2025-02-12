@@ -23,6 +23,7 @@ func ProfileHandler(db *gorm.DB) http.HandlerFunc {
 			"first_name": user.FirstName,
 			"last_name":  user.LastName,
 			"phone":      user.Phone,
+			"is_admin":   user.Role == "admin",
 		}
 
 		w.WriteHeader(http.StatusOK)
