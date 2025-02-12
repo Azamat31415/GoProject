@@ -12,14 +12,24 @@ import (
 func AddUserPet(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var pet migrations.PersonalPet
+
 		if err := json.NewDecoder(r.Body).Decode(&pet); err != nil {
 			http.Error(w, fmt.Sprintf("Error parsing JSON: %s", err.Error()), http.StatusBadRequest)
 			return
 		}
-		if err := db.Create(&pet).Error; err != nil {
-			http.Error(w, "Failed to add pet", http.StatusInternalServerError)
+
+		if pet.UserID == 0 {
+			http.Error(w, "UserID is required and must be greater than 0", http.StatusBadRequest)
 			return
 		}
+
+		fmt.Printf("Saving pet: %+v\n", pet)
+
+		if err := db.Create(&pet).Error; err != nil {
+			http.Error(w, fmt.Sprintf("Failed to add pet: %s", err.Error()), http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(pet)
 	}

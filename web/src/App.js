@@ -10,6 +10,8 @@ import CartPage from "./pages/CartPage";
 import PaymentPage from "./pages/PaymentPage";
 import OrderHistory from "./pages/OrderHistory";
 import AdminPanel from "./pages/AdminPanel";
+import EditProduct from "./pages/EditProduct";
+import AddPet from "./pages/AddPet";
 
 function App() {
     return (
@@ -27,6 +29,8 @@ function App() {
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/order-history" element={<OrderHistory />} />
                 <Route path="/admin-panel" element={<AdminPanel />} />
+                <Route path="/edit-product/:id" element={<EditProduct />} />
+                <Route path="/add-pet" element={<AddPet />} />
             </Routes>
         </Router>
     );
