@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./SubscriptionPaymentPage.css";
+import "./subpayment.css";
 
 const SubscriptionPaymentPage = () => {
     const navigate = useNavigate();
@@ -8,11 +8,13 @@ const SubscriptionPaymentPage = () => {
     const [paymentMethod, setPaymentMethod] = useState("pay_now");
     const [cardDetails, setCardDetails] = useState({ number: "", expiry: "", cvc: "", cardholder: "" });
     const [price, setPrice] = useState(0);
+    const [selectedFood, setSelectedFood] = useState("");
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (location.state) {
+        if (location.state?.price && location.state?.selectedFood) {
             setPrice(location.state.price);
-            setSelectedFood(location.state.selectedFood); // Optionally, if you want to show the selected food
+            setSelectedFood(location.state.selectedFood);
         }
     }, [location.state]);
 
@@ -24,16 +26,40 @@ const SubscriptionPaymentPage = () => {
         setCardDetails({ ...cardDetails, [event.target.name]: event.target.value });
     };
 
+    const validateFields = () => {
+        let newErrors = {};
+        if (paymentMethod === "pay_now") {
+            if (!cardDetails.number.trim()) newErrors.number = "Card number is required";
+            if (!cardDetails.expiry.trim()) newErrors.expiry = "Expiry date is required";
+            if (!cardDetails.cvc.trim()) newErrors.cvc = "CVC is required";
+            if (!cardDetails.cardholder.trim()) newErrors.cardholder = "Cardholder name is required";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handlePayment = async () => {
+        if (paymentMethod === "pay_now" && !validateFields()) {
+            return;
+        }
+
         const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userID");
+
         if (!token) {
             alert("You need to log in to proceed.");
             navigate("/login");
             return;
         }
 
+        if (!userId) {
+            alert("User ID is missing. Please log in again.");
+            navigate("/login");
+            return;
+        }
+
         const paymentData = {
-            user_id: parseInt(localStorage.getItem("userID")),
+            user_id: parseInt(userId),
             amount: price,
             payment_method: paymentMethod,
             status: "completed",
@@ -50,19 +76,20 @@ const SubscriptionPaymentPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Payment failed");
+                const responseText = await response.text();
+                alert(`Payment failed: ${responseText}`);
+                return;
             }
 
             alert("Subscription payment successful!");
             navigate("/profile");
         } catch (error) {
-            console.error("Error processing payment:", error);
             alert("There was an error processing your payment.");
         }
     };
 
     return (
-        <div className="subscription-payment-page">
+        <div className="subpayment">
             <h2>Subscription Payment</h2>
             <p>Price: ${price}</p>
             <div className="payment-method">
@@ -90,6 +117,8 @@ const SubscriptionPaymentPage = () => {
                         onChange={handleCardDetailsChange}
                         placeholder="Card Number"
                     />
+                    {errors.number && <p className="error">{errors.number}</p>}
+
                     <input
                         type="text"
                         name="expiry"
@@ -98,6 +127,8 @@ const SubscriptionPaymentPage = () => {
                         className="short-input"
                         placeholder="MM/YY"
                     />
+                    {errors.expiry && <p className="error">{errors.expiry}</p>}
+
                     <input
                         type="text"
                         name="cvc"
@@ -106,6 +137,8 @@ const SubscriptionPaymentPage = () => {
                         className="short-input"
                         placeholder="CVC"
                     />
+                    {errors.cvc && <p className="error">{errors.cvc}</p>}
+
                     <input
                         type="text"
                         name="cardholder"
@@ -113,6 +146,7 @@ const SubscriptionPaymentPage = () => {
                         onChange={handleCardDetailsChange}
                         placeholder="Cardholder Name"
                     />
+                    {errors.cardholder && <p className="error">{errors.cardholder}</p>}
                 </div>
             )}
 

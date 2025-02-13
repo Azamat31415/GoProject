@@ -7,7 +7,7 @@ const PaymentPage = () => {
     const [products, setProducts] = useState([]);
     const [deliveryMethod, setDeliveryMethod] = useState("pickup");
     const [paymentMethod, setPaymentMethod] = useState("pay_on_delivery");
-    const [userAddress, setUserAddress] = useState(null); // Изначально null для проверки состояния
+    const [userAddress, setUserAddress] = useState(null);
     const [cardDetails, setCardDetails] = useState("");
 
     useEffect(() => {

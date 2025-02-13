@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const categories = [
     {
-        name: "Dogs",
+        name: "Dog",
         subcategories: [
             { title: "Feed", items: ["Dry", "Wet", "Super premium class", "Grain-free", "Hypoallergenic"] },
             { title: "Treats", items: ["Chews", "Snacks", "Biscuits", "Training treats", "Dental sticks"] },
@@ -16,7 +16,7 @@ const categories = [
         ],
     },
     {
-        name: "Cats",
+        name: "Cat",
         subcategories: [
             { title: "Feed", items: ["Dry", "Wet", "Super premium class", "Grain-free", "Hairball control"] },
             { title: "Treats", items: ["Crunchy treats", "Soft treats", "Catnip-infused treats"] },
@@ -28,7 +28,7 @@ const categories = [
         ],
     },
     {
-        name: "Rodents",
+        name: "Rodent",
         subcategories: [
             { title: "Feed", items: ["Pellets", "Seed mix", "Hay", "Vitamin supplements"] },
             { title: "Treats", items: ["Dried fruits", "Nuts", "Crunchy sticks"] },
@@ -38,7 +38,7 @@ const categories = [
         ],
     },
     {
-        name: "Birds",
+        name: "Bird",
         subcategories: [
             { title: "Feed", items: ["Grain mix", "Pellets", "Fruit blend", "Egg food"] },
             { title: "Treats", items: ["Seed sticks", "Fruit treats", "Mineral blocks"] },
@@ -48,7 +48,7 @@ const categories = [
         ],
     },
     {
-        name: "Reptilians",
+        name: "Reptile",
         subcategories: [
             { title: "Feed", items: ["Live insects", "Frozen mice", "Pellets", "Dried food"] },
             { title: "Terrariums and equipment", items: ["Terrariums", "Heat lamps", "UVB bulbs", "Humidity control"] },

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./subscryp.css";
 
 const foodOptions = [
     { type: "Dry", price: 100 },
@@ -15,42 +16,67 @@ const SubscriptionPage = () => {
 
     useEffect(() => {
         const selected = foodOptions.find(food => food.type === selectedFood);
-        if (selected) setPrice(selected.price);
+        if (selected) {
+            setPrice(selected.price);
+            console.log("Updated price:", selected.price);
+        }
     }, [selectedFood]);
 
     const handleSubscription = async () => {
         const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userID");
+
+        console.log("Token:", token);
+        console.log("User ID:", userId);
+
         if (!token) {
+            console.error("No token found in localStorage");
             alert("You need to log in to subscribe.");
+            navigate("/login");
+            return;
+        }
+
+        if (!userId) {
+            console.error("No userID found in localStorage");
+            alert("User ID is missing. Please log in again.");
             navigate("/login");
             return;
         }
 
         setIsLoading(true);
 
+        const subscriptionData = {
+            user_id: parseInt(userId),
+            interval_days: 90,
+            type: selectedFood,
+            status: "active",
+        };
+
+        console.log("Sending subscription request:", subscriptionData);
+
         try {
-            const response = await fetch("http://localhost:8080/subscribe", {
+            const response = await fetch("http://localhost:8080/subscriptions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    user_id: 1, // Подставьте реальный user ID
-                    interval_days: 90,
-                    type: selectedFood,
-                    status: "active"
-                }),
+                body: JSON.stringify(subscriptionData),
             });
+
+            const responseText = await response.text();
+            console.log("Server response:", responseText);
 
             if (response.ok) {
                 alert("Subscription successful!");
-                // Navigate to SubscriptionPaymentPage and pass the price and selected food
-                navigate("/subscription-payment", { state: { price, selectedFood } });
+                console.log("Navigating to /subpayment with:", { price, selectedFood });
+                navigate("/subpayment", { state: { price, selectedFood } });
             } else {
-                alert("Failed to subscribe. Please try again later.");
+                console.error("Subscription failed:", responseText);
+                alert(`Failed to subscribe: ${responseText}`);
             }
         } catch (error) {
+            console.error("Error during subscription request:", error);
             alert("An error occurred. Please check your connection.");
         } finally {
             setIsLoading(false);
@@ -76,49 +102,6 @@ const SubscriptionPage = () => {
             <button className="subscribe-button" onClick={handleSubscription} disabled={isLoading}>
                 {isLoading ? "Subscribing..." : "Subscribe Now"}
             </button>
-
-            <style jsx>{`
-                .subscription-container {
-                    max-width: 400px;
-                    margin: 50px auto;
-                    padding: 20px;
-                    border-radius: 10px;
-                    background: #f9f9f9;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    text-align: center;
-                    font-family: Arial, sans-serif;
-                }
-                h2 {
-                    color: #333;
-                }
-                select {
-                    padding: 8px;
-                    margin: 10px 0;
-                    border-radius: 5px;
-                }
-                .price {
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #007bff;
-                }
-                .subscribe-button {
-                    background: #28a745;
-                    color: white;
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-size: 16px;
-                    transition: background 0.3s;
-                }
-                .subscribe-button:hover {
-                    background: #218838;
-                }
-                .subscribe-button:disabled {
-                    background: #ccc;
-                    cursor: not-allowed;
-                }
-            `}</style>
         </div>
     );
 };
