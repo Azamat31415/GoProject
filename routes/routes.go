@@ -68,8 +68,9 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Post("/subscriptions", subscription.CreateSubscription(db))
 	r.Delete("/subscriptions/{id}", subscription.DeleteSubscription(db))
 	r.Put("/subscriptions/{id}/renew", subscription.RenewSubscription(db))
+	r.Post("/subpayment", subscription.HandleSubscriptionPayment(db))
+	r.Get("/subscriptions/{user_id}", subscription.GetUserSubscription(db))
 
-	// Добавляем логирование запроса в /cart
 	//r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
 	//	body, _ := io.ReadAll(r.Body)
 	//	fmt.Println("Received JSON:", string(body))

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./subscryp.css";
 
 const foodOptions = [
@@ -11,39 +11,75 @@ const foodOptions = [
 const SubscriptionPage = () => {
     const [selectedFood, setSelectedFood] = useState(foodOptions[0].type);
     const [price, setPrice] = useState(foodOptions[0].price);
-    const [isLoading, setIsLoading] = useState(false);
+    const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const selected = foodOptions.find(food => food.type === selectedFood);
         if (selected) {
             setPrice(selected.price);
-            console.log("Updated price:", selected.price);
         }
     }, [selectedFood]);
+
+    useEffect(() => {
+        if (location.state?.subscriptionActive) {
+            const currentDate = new Date();
+            currentDate.setMonth(currentDate.getMonth() + 3);
+            setSubscriptionEndDate(currentDate.toLocaleDateString());
+        }
+    }, [location.state]);
+
+    const fetchSubscription = async () => {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userID");
+
+        if (!token || !userId) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/subscriptions/${userId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.renewal_date) {
+                    setSubscriptionEndDate(new Date(data.renewal_date).toLocaleDateString());
+                } else {
+                    console.warn("No renewal date found in response.");
+                }
+            } else {
+                console.error("Failed to fetch subscription:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error fetching subscription:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubscription();
+    }, []);
 
     const handleSubscription = async () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userID");
 
-        console.log("Token:", token);
-        console.log("User ID:", userId);
-
         if (!token) {
-            console.error("No token found in localStorage");
             alert("You need to log in to subscribe.");
             navigate("/login");
             return;
         }
 
         if (!userId) {
-            console.error("No userID found in localStorage");
             alert("User ID is missing. Please log in again.");
             navigate("/login");
             return;
         }
-
-        setIsLoading(true);
 
         const subscriptionData = {
             user_id: parseInt(userId),
@@ -51,8 +87,6 @@ const SubscriptionPage = () => {
             type: selectedFood,
             status: "active",
         };
-
-        console.log("Sending subscription request:", subscriptionData);
 
         try {
             const response = await fetch("http://localhost:8080/subscriptions", {
@@ -64,44 +98,45 @@ const SubscriptionPage = () => {
                 body: JSON.stringify(subscriptionData),
             });
 
-            const responseText = await response.text();
-            console.log("Server response:", responseText);
-
             if (response.ok) {
                 alert("Subscription successful!");
-                console.log("Navigating to /subpayment with:", { price, selectedFood });
-                navigate("/subpayment", { state: { price, selectedFood } });
+                await fetchSubscription(); // Обновляем данные подписки после успешной покупки
+                const selectedFoodItem = foodOptions.find(food => food.type === selectedFood);
+                navigate("/subpayment", { state: { price: selectedFoodItem?.price, selectedFood } });
             } else {
-                console.error("Subscription failed:", responseText);
+                const responseText = await response.text();
                 alert(`Failed to subscribe: ${responseText}`);
             }
         } catch (error) {
-            console.error("Error during subscription request:", error);
             alert("An error occurred. Please check your connection.");
-        } finally {
-            setIsLoading(false);
         }
     };
 
     return (
         <div className="subscription-container">
             <h2>3-Month Pet Food Subscription</h2>
-            <p>Receive your selected pet food every month for 3 months.</p>
-            <label>
-                Choose food type:
-                <select
-                    value={selectedFood}
-                    onChange={(e) => setSelectedFood(e.target.value)}
-                >
-                    {foodOptions.map((food) => (
-                        <option key={food.type} value={food.type}>{food.type}</option>
-                    ))}
-                </select>
-            </label>
-            <p className="price">Price: {price} $</p>
-            <button className="subscribe-button" onClick={handleSubscription} disabled={isLoading}>
-                {isLoading ? "Subscribing..." : "Subscribe Now"}
-            </button>
+            {subscriptionEndDate ? (
+                <p>Your subscription is active until {subscriptionEndDate}.</p>
+            ) : (
+                <>
+                    <p>Receive your selected pet food every month for 3 months.</p>
+                    <label>
+                        Choose food type:
+                        <select
+                            value={selectedFood}
+                            onChange={(e) => setSelectedFood(e.target.value)}
+                        >
+                            {foodOptions.map((food) => (
+                                <option key={food.type} value={food.type}>{food.type}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <p className="price">Price: {price} $</p>
+                    <button className="subscribe-button" onClick={handleSubscription}>
+                        Subscribe Now
+                    </button>
+                </>
+            )}
         </div>
     );
 };

@@ -60,3 +60,51 @@ func DeleteSubscription(db *gorm.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
+
+func HandleSubscriptionPayment(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			SubscriptionID uint    `json:"subscription_id"`
+			Amount         float64 `json:"amount"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request payload", http.StatusBadRequest)
+			return
+		}
+
+		payment := migrations.SubscriptionPayment{
+			SubscriptionID: req.SubscriptionID,
+			Amount:         req.Amount,
+			PaymentDate:    time.Now(),
+			Status:         "Paid",
+		}
+
+		if err := db.Create(&payment).Error; err != nil {
+			http.Error(w, "Failed to process payment", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(payment)
+	}
+}
+
+func GetUserSubscription(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := chi.URLParam(r, "user_id")
+		if userID == "" {
+			http.Error(w, "Missing user ID", http.StatusBadRequest)
+			return
+		}
+
+		var subscription migrations.Subscription
+		if err := db.Where("user_id = ?", userID).First(&subscription).Error; err != nil {
+			http.Error(w, "Subscription not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(subscription)
+	}
+}

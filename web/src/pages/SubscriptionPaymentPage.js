@@ -66,7 +66,7 @@ const SubscriptionPaymentPage = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/payments", {
+            const response = await fetch("http://localhost:8080/subpayment", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -81,8 +81,18 @@ const SubscriptionPaymentPage = () => {
                 return;
             }
 
+            // Устанавливаем дату окончания подписки (через 3 месяца от текущей даты)
+            const endDate = new Date();
+            endDate.setMonth(endDate.getMonth() + 3);
+
+            // Сохраняем подписку в localStorage
+            localStorage.setItem("subscription", JSON.stringify({
+                type: selectedFood,
+                endDate: endDate.toISOString(),
+            }));
+
             alert("Subscription payment successful!");
-            navigate("/profile");
+            navigate("/subscription");
         } catch (error) {
             alert("There was an error processing your payment.");
         }
@@ -99,12 +109,6 @@ const SubscriptionPaymentPage = () => {
                     onClick={() => handlePaymentMethodChange("pay_now")}
                 >
                     Pay Now
-                </div>
-                <div
-                    className={`payment-option ${paymentMethod === "pay_on_delivery" ? "selected" : ""}`}
-                    onClick={() => handlePaymentMethodChange("pay_on_delivery")}
-                >
-                    Pay on Delivery
                 </div>
             </div>
 
