@@ -3,11 +3,12 @@ package subscription
 import (
 	"GoProject/migrations"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"net/http"
-	"strconv"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"strconv"
 )
 
 func RenewSubscription(db *gorm.DB) http.HandlerFunc {
@@ -53,5 +54,18 @@ func RenewSubscription(db *gorm.DB) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(subscription)
+	}
+}
+
+func ExpireSubscriptionsNowHandler(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := migrations.ExpireSubscriptionsNow(db)
+		if err != nil {
+			http.Error(w, "Failed to expire subscriptions", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Expired subscriptions successfully updated"))
 	}
 }

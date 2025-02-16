@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./subscryp.css";
 
 const foodOptions = [
@@ -11,30 +11,15 @@ const foodOptions = [
 const SubscriptionPage = () => {
     const [selectedFood, setSelectedFood] = useState(foodOptions[0].type);
     const [price, setPrice] = useState(foodOptions[0].price);
-    const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
+    const [subscription, setSubscription] = useState(null);
     const navigate = useNavigate();
-    const location = useLocation();
-
-    useEffect(() => {
-        const selected = foodOptions.find(food => food.type === selectedFood);
-        if (selected) {
-            setPrice(selected.price);
-        }
-    }, [selectedFood]);
-
-    useEffect(() => {
-        if (location.state?.subscriptionActive) {
-            const currentDate = new Date();
-            currentDate.setMonth(currentDate.getMonth() + 3);
-            setSubscriptionEndDate(currentDate.toLocaleDateString());
-        }
-    }, [location.state]);
 
     const fetchSubscription = async () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userID");
 
         if (!token || !userId) {
+            console.log("No token or userID found.");
             return;
         }
 
@@ -48,13 +33,24 @@ const SubscriptionPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.renewal_date) {
-                    setSubscriptionEndDate(new Date(data.renewal_date).toLocaleDateString());
-                } else {
-                    console.warn("No renewal date found in response.");
+                console.log("Subscription data received:", data);
+
+                let formattedDate = "Unknown";
+                if (data.RenewalDate) {
+                    const parsedDate = new Date(data.RenewalDate);
+                    if (!isNaN(parsedDate.getTime())) {
+                        formattedDate = parsedDate.toLocaleDateString();
+                    }
                 }
+
+                setSubscription({
+                    id: data.ID,
+                    type: data.Type,
+                    renewalDate: formattedDate,
+                });
             } else {
-                console.error("Failed to fetch subscription:", await response.text());
+                console.warn("No active subscription found.");
+                setSubscription(null);
             }
         } catch (error) {
             console.error("Error fetching subscription:", error);
@@ -65,18 +61,19 @@ const SubscriptionPage = () => {
         fetchSubscription();
     }, []);
 
+    useEffect(() => {
+        const selected = foodOptions.find(food => food.type === selectedFood);
+        if (selected) {
+            setPrice(selected.price);
+        }
+    }, [selectedFood]);
+
     const handleSubscription = async () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userID");
 
-        if (!token) {
+        if (!token || !userId) {
             alert("You need to log in to subscribe.");
-            navigate("/login");
-            return;
-        }
-
-        if (!userId) {
-            alert("User ID is missing. Please log in again.");
             navigate("/login");
             return;
         }
@@ -100,9 +97,8 @@ const SubscriptionPage = () => {
 
             if (response.ok) {
                 alert("Subscription successful!");
-                await fetchSubscription(); // Обновляем данные подписки после успешной покупки
-                const selectedFoodItem = foodOptions.find(food => food.type === selectedFood);
-                navigate("/subpayment", { state: { price: selectedFoodItem?.price, selectedFood } });
+                await fetchSubscription();
+                navigate("/subpayment", { state: { price, selectedFood } });
             } else {
                 const responseText = await response.text();
                 alert(`Failed to subscribe: ${responseText}`);
@@ -112,11 +108,49 @@ const SubscriptionPage = () => {
         }
     };
 
+    const handleCancelSubscription = async () => {
+        if (!subscription || !subscription.id) {
+            console.log("No subscription to cancel.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+
+        try {
+            console.log("Sending DELETE request to:", `http://localhost:8080/subscriptions/${subscription.id}`);
+            const response = await fetch(`http://localhost:8080/subscriptions/${subscription.id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                alert("Subscription canceled.");
+                console.log("Subscription successfully deleted.");
+                setSubscription(null);
+                await fetchSubscription(); // Обновляем данные после удаления
+            } else {
+                const responseText = await response.text();
+                alert(`Failed to cancel subscription: ${responseText}`);
+                console.log("Response error:", responseText);
+            }
+        } catch (error) {
+            console.error("Error canceling subscription:", error);
+            alert("An error occurred while canceling the subscription.");
+        }
+    };
+
     return (
         <div className="subscription-container">
             <h2>3-Month Pet Food Subscription</h2>
-            {subscriptionEndDate ? (
-                <p>Your subscription is active until {subscriptionEndDate}.</p>
+            {subscription ? (
+                <>
+                    <p>Your subscription for <strong>{subscription.type}</strong> is active until {subscription.renewalDate}.</p>
+                    <button className="cancel-button" onClick={handleCancelSubscription}>
+                        Cancel Subscription
+                    </button>
+                </>
             ) : (
                 <>
                     <p>Receive your selected pet food every month for 3 months.</p>

@@ -25,3 +25,15 @@ type SubscriptionProduct struct {
 func MigrateSubscription(db *gorm.DB) error {
 	return db.AutoMigrate(&Subscription{}, &SubscriptionProduct{})
 }
+
+func ExpireSubscriptionsNow(db *gorm.DB) error {
+	now := time.Now()
+	result := db.Model(&Subscription{}).
+		Where("renewal_date < ? AND status = ?", now, "active").
+		Update("status", "expired")
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

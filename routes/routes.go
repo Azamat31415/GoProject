@@ -70,6 +70,7 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Put("/subscriptions/{id}/renew", subscription.RenewSubscription(db))
 	r.Post("/subpayment", subscription.HandleSubscriptionPayment(db))
 	r.Get("/subscriptions/{user_id}", subscription.GetUserSubscription(db))
+	r.Put("/subscriptions/expire", subscription.ExpireSubscriptionsNowHandler(db))
 
 	//r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
 	//	body, _ := io.ReadAll(r.Body)

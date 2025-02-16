@@ -47,3 +47,24 @@ select {
     background: #ccc;
     cursor: not-allowed;
 }
+
+.cancel-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+    margin-top: 15px;
+}
+
+.cancel-button:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.cancel-button:active {
+    transform: scale(0.95);
+}
