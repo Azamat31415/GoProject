@@ -12,6 +12,8 @@ const AdminPanel = () => {
     const [productId, setProductId] = useState("");
     const [users, setUsers] = useState([]);
     const [product, setProduct] = useState(null);
+    const [subscriptionId, setSubscriptionId] = useState("");
+    const [subscription, setSubscription] = useState(null);
     const [productForm, setProductForm] = useState({
         name: "",
         description: "",
@@ -108,6 +110,28 @@ const AdminPanel = () => {
         }
     };
 
+    const fetchSubscriptionById = async () => {
+        if (!subscriptionId) return;
+        try {
+            const response = await fetch(`http://localhost:8080/subscriptions/${subscriptionId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setSubscription(data);
+            } else {
+                setSubscription(null);
+                alert("Subscription not found");
+            }
+        } catch (error) {
+            console.error("Error fetching subscription:", error);
+        }
+    };
+
+
+    const handleSubscriptionIdChange = (e) => {
+        setSubscriptionId(e.target.value);
+    };
 
     const fetchProductById = async () => {
         if (!productId) return;
@@ -299,7 +323,30 @@ const AdminPanel = () => {
                     </div>
                 );
             case "subscriptions":
-                return <div className="admin-content spaced-content">Subscriptions Content</div>;
+                return (
+                    <div className="admin-content spaced-content">
+                        <h3>Find Subscription by ID</h3>
+                        <input
+                            type="text"
+                            placeholder="Enter Subscription ID"
+                            value={subscriptionId}
+                            onChange={(e) => setSubscriptionId(e.target.value)}
+                        />
+                        <button onClick={fetchSubscriptionById}>Find Subscription</button>
+
+                        {subscription && (
+                            <div className="subscription-card">
+                                <p><strong>ID:</strong> {subscription.ID}</p>
+                                <p><strong>User ID:</strong> {subscription.UserID}</p>
+                                <p><strong>Type:</strong> {subscription.Type}</p>
+                                <p><strong>Status:</strong> {subscription.Status}</p>
+                                <p><strong>Start Date:</strong> {new Date(subscription.StartDate).toLocaleDateString()}</p>
+                                <p><strong>Renewal Date:</strong> {new Date(subscription.RenewalDate).toLocaleDateString()}</p>
+                                <p><strong>Interval (Days):</strong> {subscription.IntervalDays}</p>
+                            </div>
+                        )}
+                    </div>
+                );
             case "users":
                 return (
                     <div className="admin-content spaced-content">

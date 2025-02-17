@@ -130,3 +130,36 @@
 .user-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+.subscription-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.subscription-table th, .subscription-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.subscription-table th {
+    background-color: #f4f4f4;
+}
+
+.subscription-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.expire-button {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.expire-button:hover {
+    background-color: #cc0000;
+}
