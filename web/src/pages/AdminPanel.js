@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminPanel.css";
+import ProductCard from "../components/ProductCard";
 
 const AdminPanel = () => {
     const navigate = useNavigate();
@@ -8,7 +9,8 @@ const AdminPanel = () => {
     const role = localStorage.getItem("role");
     const [activeTab, setActiveTab] = useState(null);
     const [orders, setOrders] = useState([]);
-    const [expandedOrder, setExpandedOrder] = useState(null);
+    const [productId, setProductId] = useState("");
+    const [product, setProduct] = useState(null);
     const [productForm, setProductForm] = useState({
         name: "",
         description: "",
@@ -81,6 +83,30 @@ const AdminPanel = () => {
             fetchOrders();
         }
     }, [activeTab]);
+
+    const fetchProductById = async () => {
+        if (!productId) return;
+        try {
+            const response = await fetch(`http://localhost:8080/products/${productId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setProduct(data);
+            } else {
+                setProduct(null);
+                alert("Product not found");
+            }
+        } catch (error) {
+            console.error("Error fetching product:", error);
+        }
+    };
+
+    const handleProductIdChange = (e) => {
+        setProductId(e.target.value);
+    };
+
+
 
     const fetchOrders = async () => {
         try {
@@ -205,6 +231,10 @@ const AdminPanel = () => {
                             )}
                             <button type="submit">Add Product</button>
                         </form>
+                        <h3>Find Product by ID</h3>
+                        <input type="text" placeholder="Enter Product ID" value={productId} onChange={handleProductIdChange} />
+                        <button onClick={fetchProductById}>Find Product</button>
+                        {product && <ProductCard product={product} />}
                     </div>
                 );
             case "subscriptions":

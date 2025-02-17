@@ -85,6 +85,7 @@ const ProductCard = ({ product }) => {
             </button>
             {userRole === "admin" && (
                 <>
+                    <p className="product-id"><strong>ID:</strong> {product.ID}</p>
                     <button className="edit-product-button" onClick={() => navigate(`/edit-product/${product.ID}`)}>
                         Edit
                     </button>
