@@ -10,6 +10,7 @@ const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState(null);
     const [orders, setOrders] = useState([]);
     const [productId, setProductId] = useState("");
+    const [users, setUsers] = useState([]);
     const [product, setProduct] = useState(null);
     const [productForm, setProductForm] = useState({
         name: "",
@@ -83,6 +84,30 @@ const AdminPanel = () => {
             fetchOrders();
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (activeTab === "users") {
+            fetchUsers();
+        }
+    }, [activeTab]);
+
+
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/users", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUsers(data);
+            } else {
+                alert("Failed to fetch users");
+            }
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
 
     const fetchProductById = async () => {
         if (!productId) return;
@@ -276,7 +301,39 @@ const AdminPanel = () => {
             case "subscriptions":
                 return <div className="admin-content spaced-content">Subscriptions Content</div>;
             case "users":
-                return <div className="admin-content spaced-content">Users Content</div>;
+                return (
+                    <div className="admin-content spaced-content">
+                        <h3>Users List</h3>
+                        <table className="user-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Role</th>
+                                <th>Created At</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {users.map(user => (
+                                <tr key={user.ID}>
+                                    <td>{user.ID}</td>
+                                    <td>{user.Email}</td>
+                                    <td>{user.FirstName}</td>
+                                    <td>{user.LastName}</td>
+                                    <td>{user.Phone}</td>
+                                    <td>{user.Address}</td>
+                                    <td>{user.Role}</td>
+                                    <td>{new Date(user.CreatedAt).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
             default:
                 return <div className="admin-content spaced-content">Select an option above</div>;
         }

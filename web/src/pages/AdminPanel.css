@@ -110,3 +110,23 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 10;
 }
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.user-table th, .user-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.user-table th {
+    background-color: #f4f4f4;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

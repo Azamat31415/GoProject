@@ -41,3 +41,17 @@ func GetUserAddress(db *gorm.DB) http.HandlerFunc {
 		}
 	}
 }
+
+func GetUsersHandler(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var users []migrations.User
+
+		if err := db.Find(&users).Error; err != nil {
+			http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(users)
+	}
+}

@@ -38,6 +38,8 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Post("/login", auth.LoginHandler(db))
 	r.Get("/profile", auth.ProfileHandler(db))
 
+	r.Get("/users", auth.GetUsersHandler(db))
+
 	// Routes for orders
 	r.Post("/orders", order.CreateOrder(db))
 	r.Put("/orders/{id}/status/update", order.UpdateOrderStatus(db))
@@ -72,17 +74,10 @@ func InitializeRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/subscriptions/{user_id}", subscription.GetUserSubscription(db))
 	r.Put("/subscriptions/expire", subscription.ExpireSubscriptionsNowHandler(db))
 
-	//r.Post("/cart", func(w http.ResponseWriter, r *http.Request) {
-	//	body, _ := io.ReadAll(r.Body)
-	//	fmt.Println("Received JSON:", string(body))
-	//	cart.AddToCart(db)(w, r)
-	//})
 	r.Post("/cart", cart.AddToCart(db))
 	r.Delete("/cart/{id}", cart.RemoveFromCart(db))
 	r.Put("/cart/update/{id}/{quantity}", cart.UpdateCartItemQuantity(db))
 	r.Delete("/cart/{id}/byone", cart.RemoveOneItemFromCart(db))
 	r.Get("/cart/user/{user_id}/products", cart.GetCartByUser(db))
 	r.Get("/cart/{user_id}/{product_id}", cart.GetCartID(db))
-	//r.Get("/cart/user/{user_id}/products", cart.GetProductIDsByUser(db))
-
 }
