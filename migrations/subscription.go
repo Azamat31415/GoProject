@@ -17,13 +17,8 @@ type Subscription struct {
 	UpdatedAt    time.Time
 }
 
-type SubscriptionProduct struct {
-	SubscriptionID uint
-	ProductID      uint
-}
-
 func MigrateSubscription(db *gorm.DB) error {
-	return db.AutoMigrate(&Subscription{}, &SubscriptionProduct{})
+	return db.AutoMigrate(&Subscription{})
 }
 
 func ExpireSubscriptionsNow(db *gorm.DB) error {

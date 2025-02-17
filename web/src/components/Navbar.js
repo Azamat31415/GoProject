@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const categories = [
     {
@@ -70,9 +70,7 @@ const categories = [
 
 const Navbar = () => {
     const [activeCategory, setActiveCategory] = useState(null);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -83,12 +81,22 @@ const Navbar = () => {
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => response.json())
-                .then((data) => {
-                    if (data.is_admin) setIsAdmin(true);
-                })
                 .catch((error) => console.error("Error fetching profile:", error));
         }
     }, []);
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(".dropdown")) {
+                setActiveCategory(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
 
     const handleCategoryClick = useCallback((categoryName) => {
         setActiveCategory((prev) => (prev === categoryName ? null : categoryName));
