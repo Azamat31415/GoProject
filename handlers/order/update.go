@@ -9,7 +9,7 @@ import (
 )
 
 var validStatuses = []string{
-	"pending", "in_progress", "shipped", "delivered", "cancelled", "returned", "out_for_delivery",
+	"pending", "shipped", "delivered", "cancelled", "returned",
 }
 
 func UpdateOrderStatus(db *gorm.DB) http.HandlerFunc {

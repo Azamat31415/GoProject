@@ -176,6 +176,33 @@ const AdminPanel = () => {
         }
     };
 
+    const handleStatusChange = async (orderId, newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:8080/orders/${orderId}/status/update`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            if (response.ok) {
+                alert("Order status updated successfully");
+                setOrders(prevOrders =>
+                    prevOrders.map(order =>
+                        order.ID === orderId ? { ...order, Status: newStatus } : order
+                    )
+                );
+            }else {
+                alert("Failed to update order status");
+            }
+        } catch (error) {
+            console.error("Error updating order status:", error);
+        }
+    };
+
+    const orderStatuses = ["Pending", "Shipped", "Delivered", "Cancelled", "Returned",];
 
 
     const renderContent = () => {
@@ -193,6 +220,15 @@ const AdminPanel = () => {
                                     <p><strong>Address:</strong> {order.Address}</p>
                                     <p><strong>Status:</strong> {order.Status}</p>
                                     <p><strong>Total:</strong> ${order.TotalPrice.toFixed(2)}</p>
+
+                                    <select
+                                        onChange={(e) => handleStatusChange(order.ID, e.target.value.toLowerCase())}
+                                        defaultValue={order.Status.toLowerCase()}
+                                    >
+                                        {orderStatuses.map(status => (
+                                            <option key={status} value={status}>{status}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             ))}
                         </div>
